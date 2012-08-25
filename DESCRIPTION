@@ -1,0 +1,9 @@
+Package: DreamBox7
+Version: 0.2
+Date: 2012-06-19
+Title: Working libraries for DREAM7 BCC challenge
+Author: Cheng, Wei-Yi <wc2302@columbia.edu>
+Maintainer: Cheng, Wei-Yi <wc2302@columbia.edu>
+Depends: R (>= 2.0.1)
+Description: Contains necessary codes for DREAM7 BCAA challenge.
+License: GPL (>= 2)

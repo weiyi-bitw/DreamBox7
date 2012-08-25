@@ -1,0 +1,15 @@
+useDynLib(DreamBox7)
+export(logRankScore, 
+	getMI,
+	getMI2vs1, 
+	getAllMIWz, 
+	findAttractor, 
+	load.exp, 
+	loadTextMat, 
+	getCorr, 
+	getAllCorWz,
+	findCorrAttractor,
+	getCCDIdx,
+	getAllCCDIWz,
+	testNA, 
+	cwknn.impute)
