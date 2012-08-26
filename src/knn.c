@@ -65,10 +65,13 @@ void cwknn(double const *db, double const *x, int k, int m, int n, int const *ta
 			//Rprintf("%f*%f\t", rs[oo[n-1-j]], db[target[t] + oo[n-1-j] * m]);
 			o[t] += db[target[t] + oo[n-1-j] * m] * rs[oo[n-1-j]];
 			wsum += rs[oo[n-1-j]];
-		}Rprintf("\n");
+		}//Rprintf("\n");
 		o[t] /= wsum;
 	}
 	//Rprintf("Done!\n");
+	free(rs);
+	free(sgn);
+	free(oo);
 }
 
 
@@ -100,5 +103,74 @@ SEXP cwknnR2C(SEXP dbIn, SEXP xIn, SEXP kIn, SEXP mIn, SEXP nIn, SEXP tgtIn){
 	cwknn(db, x, k, m, n, target, nt, o);
 
 	UNPROTECT(7);
+	return(out);
+}
+
+
+void ewknn(double const *db, double const *x, double const *wvec, int k, int m, int n, int const *target, R_len_t nt, double* o){
+	int i, j, mm;
+	R_len_t t;
+	double y, wsum; 
+	double *ds = (double*) calloc(n, sizeof(double));
+	double minimumDec = 0.0001; // minimum delta to be added
+	int *oo = (int*) calloc(n, sizeof(int));	
+	
+	for(j = 0; j < n; j++){
+		ds[j] = 0;
+		mm = m;
+		for(i = 0; i < m; i++){
+			y = db[i + j*m];
+			if(ISNA(x[i]) || ISNA(y)) mm--;
+			else ds[j] += (wvec[i]*wvec[i]*(x[i] - y)*(x[i] - y) );
+		}
+		ds[j] = mm/sqrt(ds[j] + minimumDec * mm / m);
+	}
+	order(ds, n, oo);
+	for(t = 0; t < nt; t++){
+		o[t] = 0;
+		wsum = 0;
+		for(j = 0; j < k; j++){
+			//Rprintf("%f*%f\t", ds[oo[n-1-j]], db[target[t] + oo[n-1-j] * m]);
+			o[t] += ( db[target[t] + oo[n-1-j] * m] * ds[oo[n-1-j]] ) ;
+			wsum += ds[oo[n-1-j]] ;
+		}//Rprintf("\n");
+		//Rprintf("o: %f\nwsum: %f\n",o[t],wsum );
+		o[t] /= wsum;
+	}
+	//Rprintf("Done!\n");
+	free(ds);
+	free(oo);
+}
+
+
+SEXP ewknnR2C(SEXP dbIn, SEXP xIn, SEXP wvecIn, SEXP kIn, SEXP mIn, SEXP nIn, SEXP tgtIn){
+	SEXP out;
+	double *db, *x, *wvec, *o;
+	int m, n, k, *target;
+	R_len_t nt;
+
+	nt = LENGTH(tgtIn);
+
+	PROTECT(dbIn = AS_NUMERIC(dbIn));
+	PROTECT(xIn = AS_NUMERIC(xIn));
+	PROTECT(wvecIn = AS_NUMERIC(wvecIn));
+	PROTECT(mIn = AS_NUMERIC(mIn));
+	PROTECT(nIn = AS_NUMERIC(nIn));
+	PROTECT(kIn = AS_NUMERIC(kIn));
+	PROTECT(tgtIn = AS_INTEGER(tgtIn));
+	PROTECT(out = NEW_NUMERIC(nt));
+
+	db = NUMERIC_POINTER(dbIn);
+	x = NUMERIC_POINTER(xIn);
+	wvec = NUMERIC_POINTER(wvecIn);
+	m = NUMERIC_POINTER(mIn)[0];
+	n = NUMERIC_POINTER(nIn)[0];
+	k = NUMERIC_POINTER(kIn)[0];
+	target = INTEGER_POINTER(tgtIn);
+	o = NUMERIC_POINTER(out);	
+	
+	ewknn(db, x, wvec,  k, m, n, target, nt, o);
+
+	UNPROTECT(8);
 	return(out);
 }
