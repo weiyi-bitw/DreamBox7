@@ -9,7 +9,7 @@ cwknn.impute <- function(X, k = 11){
 	out = rep(NA, nmiss)	
 
 	for(i in 1:nmiss){
-		cat(i, "/", nmiss, "\n");
+		# cat(i, "/", nmiss, "\n");
 		flush.console()
 		ii = which(idxx == idxx[i])
 		y_garbage = idxy[ii]
@@ -22,7 +22,7 @@ cwknn.impute <- function(X, k = 11){
 	X[idx] = out
 }
 
-ewknn.impute <- function(X, wvec, k=11){
+ewknn.impute <- function(X, wvec = rep(1, nrow(X)), k=11){
 	idx = which(is.na(X))
 	nmiss = length(idx)
 	idxx = idx %% nrow(X)
@@ -33,7 +33,7 @@ ewknn.impute <- function(X, wvec, k=11){
 	out = rep(NA, nmiss)	
 
 	for(i in 1:nmiss){
-		cat(i, "/", nmiss, "\n");
+		# cat(i, "/", nmiss, "\n");
 		flush.console()
 		ii = which(idxx == idxx[i])
 		y_garbage = idxy[ii]

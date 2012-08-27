@@ -118,12 +118,17 @@ void ewknn(double const *db, double const *x, double const *wvec, int k, int m, 
 	for(j = 0; j < n; j++){
 		ds[j] = 0;
 		mm = m;
+		wsum = 0;
 		for(i = 0; i < m; i++){
 			y = db[i + j*m];
 			if(ISNA(x[i]) || ISNA(y)) mm--;
-			else ds[j] += (wvec[i]*wvec[i]*(x[i] - y)*(x[i] - y) );
+			else {
+				ds[j] += (wvec[i]*wvec[i]*(x[i] - y)*(x[i] - y) );
+				wsum += wvec[i] * wvec[i];
+			}
 		}
-		ds[j] = mm/sqrt(ds[j] + minimumDec * mm / m);
+		//ds[j] = mm/sqrt(ds[j] + minimumDec);
+		ds[j] = wsum / sqrt(ds[j] + minimumDec );
 	}
 	order(ds, n, oo);
 	for(t = 0; t < nt; t++){
