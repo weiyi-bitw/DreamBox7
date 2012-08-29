@@ -6,8 +6,8 @@ void concordance_index(double* predictions, double* observations, int* nIn, doub
 	for(i = 0; i < n-1; i++){
 	  for(j = i+1; j < n; j++){
 		if( ((observations[n + i]==1) && (observations[n + j]==1)) ||
-		((observations[n + i] == 1) && (observations[j] >= observations[i])) || 
-		((observations[n + j] == 1) && (observations[i] >= observations[j])) )
+		((observations[n + i] == 1) && (observations[j] > observations[i])) || 
+		((observations[n + j] == 1) && (observations[i] > observations[j])) )
 		{
 			count += 2;
 			if(observations[i] < observations[j]){
@@ -36,8 +36,8 @@ double concordance_index_all(double* predictions, double* observations, int* mIn
         for(i = 0; i < n-1; i++){
           for(j = i+1; j < n; j++){
                 if( ((observations[n + i]==1) && (observations[n + j]==1)) ||
-                ((observations[n + i] == 1) && (observations[j] >= observations[i])) ||
-                ((observations[n + j] == 1) && (observations[i] >= observations[j])) ){
+                ((observations[n + i] == 1) && (observations[j] > observations[i])) ||
+                ((observations[n + j] == 1) && (observations[i] > observations[j])) ){
                         count += 2;
                         if(observations[i] < observations[j]){
                                 for(k = 0; k < m; k++){

@@ -46,3 +46,18 @@ ewknn.impute <- function(X, wvec = rep(1, nrow(X)), k=11){
 	X[idx] = out
 }
 
+ewknn.predict <- function(X, t, qX, wvec=rep(1, nrow(X)), k=11){
+	
+	m = nrow(X)
+	n = ncol(X)
+	
+	if(length(t) != n){stop("error: length(t) != ncol(X)")}
+	if(nrow(qX) != m){stop("error: nrow(qX) != nrow(X)!!")}
+	if(length(wvec) != m){stop("error: length(wvec) != nrow(X)")}
+	
+	nq = ncol(qX)
+	out = .Call("ewknnPredictR2C", X, t, qX, wvec, k, m, n, nq)
+	
+	return(out)
+}
+

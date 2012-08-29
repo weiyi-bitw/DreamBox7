@@ -13,5 +13,6 @@ export(logRankScore,
 	getAllCCDIWz,
 	testNA, 
 	cwknn.impute,
-	ewknn.impute
+	ewknn.impute,
+	ewknn.predict
 )
