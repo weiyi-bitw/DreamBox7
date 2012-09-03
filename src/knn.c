@@ -208,11 +208,11 @@ void ewknn_predict(double const *x, double const *y, double const *q, double con
 	  o[qj] = 0;
 	  wsum = 0;
 	  for(j = 0; j < k; j++){
-		Rprintf("%f*%f\t", ds[oo[n-1-j]], y[oo[n-1-j]]);
+		//Rprintf("%f*%f\t", ds[oo[n-1-j]], y[oo[n-1-j]]);
 		o[qj] += ( y[ oo[n-1-j] ] * ds[oo[n-1-j]] ) ;
 		wsum += ds[oo[n-1-j]] ;
 	  }//Rprintf("\n");
-	  //Rprintf("o: %f\nwsum: %f\n",o[t],wsum );
+	  //Rprintf("o: %f\nwsum: %f\n",o[qj],wsum );
 	  o[qj] /= wsum;
 	  }
 	  //Rprintf("Done!\n");
@@ -232,7 +232,6 @@ SEXP ewknnPredictR2C(SEXP xIn, SEXP yIn, SEXP qIn, SEXP wvecIn, SEXP kIn, SEXP m
 	PROTECT(nIn = AS_NUMERIC(nIn));
 	PROTECT(kIn = AS_NUMERIC(kIn));
 	PROTECT(nqIn = AS_NUMERIC(nqIn));
-	PROTECT(out = NEW_NUMERIC(nq));
 
 	x = NUMERIC_POINTER(xIn);
 	y = NUMERIC_POINTER(yIn);
@@ -242,6 +241,7 @@ SEXP ewknnPredictR2C(SEXP xIn, SEXP yIn, SEXP qIn, SEXP wvecIn, SEXP kIn, SEXP m
 	n = NUMERIC_POINTER(nIn)[0];
 	k = NUMERIC_POINTER(kIn)[0];
 	nq = NUMERIC_POINTER(nqIn)[0];
+	PROTECT(out = NEW_NUMERIC(nq));
 	o = NUMERIC_POINTER(out);
 	
 	ewknn_predict(x, y, q, wvec,  k, m, n, nq, o);
