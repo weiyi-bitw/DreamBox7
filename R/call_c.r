@@ -39,6 +39,24 @@ getMI = function(x, y, bin=6, so=3, rankBased=FALSE, normalize=TRUE, negateMI = 
   return (mi)
 
 }
+getMI3 = function(x, y, z, bin=6, so=3, rankBased=FALSE){
+  n <- length(x)
+  if(length(y) != n | length(z) != n){stop("legnth of three vectors are different!")}
+  if(so >= bin){stop("spline order must be less than bin")}
+  
+    if(rankBased){
+      x = rank(x)
+      y = rank(y)
+      z = rank(z)
+    }
+      out = .C("mi3", x = as.double(x), y=as.double(y), z=as.double(z), n=as.integer(n), bin=as.integer(bin), so = as.integer(so), miOut = 0)
+
+  mi = out$miOut
+  return (mi)
+
+}
+
+
 
 getMI2vs1 = function(x, y, z, bin=6, so=3, normalize=FALSE){
   n <- length(x)

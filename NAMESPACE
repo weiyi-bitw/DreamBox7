@@ -1,6 +1,7 @@
 useDynLib(DreamBox7)
 export(logRankScore, 
 	getMI,
+	getMI3,
 	getMI2vs1, 
 	getAllMIWz, 
 	findAttractor, 

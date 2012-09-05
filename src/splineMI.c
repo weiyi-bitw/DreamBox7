@@ -330,6 +330,34 @@ void mi2(const double *x, const double *y, int *n, int *bin, int *so, double *mi
   *miOut = mi;
 }
 
+void mi3(const double *x, const double *y, const double *z, int *n, int *bin, int *so, double *miOut){
+  double *u = (double*) calloc(*bin + *so, sizeof(double));
+  double *wx = (double*) calloc(*bin * *n, sizeof(double));
+  double *wy = (double*) calloc(*bin * *n, sizeof(double));
+  double *wz = (double*) calloc(*bin * *n, sizeof(double));
+  double e1x, e1y, e1z, e2xy, e2yz, e2xz, mi;
+
+
+  knotVector(u, *bin, *so);
+  findWeights(x, u, wx, *n, *so, *bin, -1, -1);
+  findWeights(y, u, wy, *n, *so, *bin, -1, -1);
+  findWeights(z, u, wz, *n, *so, *bin, -1, -1);
+  e1x = entropy1(wx, *n, *bin);
+  e1y = entropy1(wy, *n, *bin);
+  e1z = entropy1(wz, *n, *bin);
+  e2xy = entropy2(wx, wy, *n, *bin);
+  e2yz = entropy2(wy, wz, *n, *bin);
+  e2xz = entropy2(wx, wz, *n, *bin);
+  mi = entropy3(wx, wy, wz, *n, *bin) - e2xy - e2yz - e2xz + e1x + e1y + e1z;
+
+  free(wx);
+  free(wy);
+  free(wz);
+  free(u);
+  *miOut = mi;
+}
+
+
 void mi2DiffBins(const double *x, const double *y, int *n, int *binx, int *biny, int *sox, int *soy, double *miOut, int *norm, int *negateMI){
 	double *ux = (double*) calloc(*binx + *sox, sizeof(double));
 	double *wx = (double*) calloc(*binx * *n, sizeof(double));
