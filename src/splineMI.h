@@ -21,6 +21,7 @@ double entropy1(const double*, int, int);
 
 // export R function
 void mi2(const double *, const double *, int *, int *, int *, double *, int *, int *);
+void mi3(const double *, const double *, const double *, int *, int *, int *, double*);
 void mi2DiffBins(const double *, const double *, int *, int *, int *, int *, int *, double *, int *, int *);
 void mi2vs1(const double *, const double *, const double *, int *, int *, int *, double *, int *);
 void getAllMIWz(const double *, const double* , double *, int *, int *, int *, int *, int *, int *);
