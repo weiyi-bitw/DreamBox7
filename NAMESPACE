@@ -1,4 +1,5 @@
 useDynLib(DreamBox7)
+importFrom(survival, coxph, survConcordance)
 export(logRankScore, 
 	getMI,
 	getMI3,
@@ -12,8 +13,8 @@ export(logRankScore,
 	findCorrAttractor,
 	getCCDIdx,
 	getAllCCDIWz,
-	testNA, 
-	cwknn.impute,
 	ewknn.impute,
-	ewknn.predict
+	ewknn.predict,
+	preproClncKNN,
+	ewknn.predict.clnc
 )
