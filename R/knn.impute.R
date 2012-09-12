@@ -61,3 +61,53 @@ ewknn.predict <- function(X, t, qX, wvec=rep(1, nrow(X)), k=11){
 	return(out)
 }
 
+preproClncKNN=function(c, survobj){
+	n = ncol(c)
+	m = nrow(c)
+	isFactor = rep(NA, n)
+	for(i in 1:n) isFactor[i] = is.factor(c[,i])
+	names(isFactor) = colnames(c)
+	isFactor["grade"] = TRUE
+	c[,"grade"] = factor(c[,"grade"])
+	distWeight = list()
+	ws = rep(NA, n)
+	names(ws) = colnames(c)
+	for(i in 1:n){
+		x = c[,i]
+		if(isFactor[i]){
+			max.i = which.max(table(x))
+			levx = levels(x)
+			contrmat = matrix(0, nrow=length(levx), ncol=length(levx)-1)
+			contrmat[max.i,] = rep(-1, ncol(contrmat))
+			contrmat[-max.i,] = diag(1, ncol(contrmat-1))
+			contrasts(x) = contrmat
+			fit = coxph(survobj~x)
+			coeff = fit$coef
+			coeff[is.na(coeff)] = 0
+			coeffFac = rep(0, length(levx))
+			coeffFac[-max.i] = coeff
+			coeffFac[max.i] = 0-sum(coeff)
+			coeff = coeffFac
+			names(coeff) = levels(x) 
+		}else{
+			fit = coxph(survobj~x)
+			coeff = fit$coef
+			coeff[is.na(coeff)] = 0
+		}
+		ws[i] = survConcordance(survobj~predict(fit))$concordance
+		distWeight[[i]] = coeff
+	}
+	names(distWeight) = colnames(c)
+	out = list(clinical = c, isFactor = isFactor, distWeight = distWeight, weights = ws)
+}
+
+clncDist = function(a, b, isFac, dw){
+	
+	d = mapply(function(x, y, isFaci, dwi){
+		if(isFaci) abs(dwi[x] - dwi[y])
+		else abs(x - y) * dwi
+	},
+	a, b, isFac, dw
+	)
+	mean(d^2)
+}
