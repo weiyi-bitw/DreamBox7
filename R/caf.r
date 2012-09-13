@@ -69,3 +69,63 @@ findCorrAttractor = function(data, vec, a=10,rankBased = FALSE, maxIter=100, eps
 	return (sort(rs, decreasing=T))
 }
 
+CreateMetageneSpace <- function(ge, attractome, map){
+  nMeta = length(attractome)
+  metaSpace = matrix(NA, nrow=nMeta, ncol=ncol(ge))
+  dimnames(metaSpace) = list(names(attractome), colnames(ge))
+  pbs = list()
+  mappedGenes = map[rownames(ge),1]
+  for (i in 1:nMeta){
+    #cat(i, "\n")
+    #flush.console()
+    a = attractome[[i]]
+    if(nrow(a) > 10){
+      genes = a[1:10,1]
+    }else{
+      genes = a[, 1]
+    }
+    il = lapply(genes, function(g){which(mappedGenes == g)})
+    ill = sapply(il, length)
+    goodIdx = unlist(sapply(il, function(i){ if(length(i) == 1) i}))
+    numGood = sum(ill == 1)
+    goodMat = NULL
+    if(numGood > 0){
+      goodMat = ge[goodIdx,]
+    }
+    badIdx = il[sapply(il, function(i){length(i) > 1 })]
+
+    numBad = length(badIdx)
+    
+    badMat = NULL
+    chosenIdx = NULL
+    if(numBad > 0) {
+     # geneSum = apply(ge[unlist(il), ],2,sum)
+     # chosenIdx = unlist (sapply(badIdx, function(idcs){
+	#mis = sapply(idcs, function(i){getMI(geneSum, ge[i,])} )
+	#idcs[which.max(mis)]
+     # }) )
+	#badMat = ge[chosenIdx,]
+	badMat = t(sapply(badIdx, function(idcs){
+		apply(ge[idcs,], 2, function(x){mean(x, na.rm=TRUE)})
+	}) )
+    }    
+    #pbs[[i]] = c(goodIdx, chosenIdx)
+    metaSpace[i,] = (apply(rbind(goodMat, badMat), 2, mean))
+
+    #o = sapply(genes, 
+    #          function(g, ge, mappedGenes){
+    #           idx = which(mappedGenes == g)
+    #          if (length(idx)==1) return (ge[idx,])
+    #             if (length(idx)==0) return (rep(NA, ncol(ge)))
+    #             return (apply(ge[idx,], 2, function(x) mean(x, na.rm=T)))
+    #           },
+    #           ge = ge,
+    #           mappedGenes = map[rownames(ge), "Gene.Symbol"]
+    #           )
+    #if(length(genes)==1){metaSpace[i,] = o}
+    #else {metaSpace[i,] = apply(o, 1, function(x) mean(x, na.rm=T))}
+  }
+  #names(pbs) = names(attractome)
+  #o = list(metaSpace = metaSpace, pbs = pbs)
+  return (metaSpace)
+}
