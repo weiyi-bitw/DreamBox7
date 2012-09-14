@@ -71,10 +71,8 @@ getMI2vs1 = function(x, y, z, bin=6, so=3, normalize=FALSE){
 }
 
 getCCDIdx = function(predictions, observations){
-	n = length(predictions)
-	out = .C("concordance_index", predictions=as.double(predictions), observations=as.double(observations), nIn = as.integer(n), c = as.double(0))
-	c = out$c
-	return (c); 
+	out = .Call("ccdiR2C", predictions, observations)
+	return (out); 
 }
 
 getAllCCDIWz = function(x, observations, sorted=FALSE){
