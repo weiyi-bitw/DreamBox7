@@ -17,5 +17,6 @@ export(logRankScore,
 	ewknn.impute,
 	ewknn.predict,
 	preproClncKNN,
-	ewknn.predict.clnc
+	ewknn.predict.clnc,
+	fwMCMC
 )
