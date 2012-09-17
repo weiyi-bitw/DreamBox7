@@ -74,11 +74,9 @@ preproClncKNN=function(c, survobj=NULL, isFactorIn=NULL, dwIn=NULL){
 		isFactor = rep(NA, n)
 		for(i in 1:n) isFactor[i] = is.factor(c[,i])
 		names(isFactor) = colnames(c)
-		isFactor["grade"] = TRUE
 	}else{
 		isFactor = isFactorIn
 	}
-	c[,"grade"] = factor(c[,"grade"])
 	distWeight = list()
 	ccdi = rep(NA, n)
 	names(ccdi) = colnames(c)
