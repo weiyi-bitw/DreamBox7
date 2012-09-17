@@ -62,7 +62,7 @@ ewknn.predict <- function(X, t, qX, wvec=rep(1, nrow(X)), k=ncol(X)){
 }
 
 
-preproClncKNN=function(c, survobj=NULL, isFactorIn=NULL, dwIn=NULL){
+preproClncKNN=function(c, survobj=NULL, isFactorIn=NULL, dwIn=NULL, ccdi.upper = 0.55, ccdi.lower = 0.45){
 	n = ncol(c)
 	m = nrow(c)
 	if(!is.null(survobj)) if(nrow(survobj) != m) {stop("error: nrow(survobj) != nrow(clnc)")}
@@ -121,7 +121,7 @@ preproClncKNN=function(c, survobj=NULL, isFactorIn=NULL, dwIn=NULL){
 		idx = which(survobj[,2]==1)
 		cout = c[idx,]
 		tout = survobj[idx, 1]
-		idx2 = which(ccdi > 0.55 | ccdi < 0.45)
+		idx2 = which(ccdi > ccdi.upper | ccdi < ccdi.lower)
 		cout = cout[, names(idx2)]
 		ccdi = ccdi[names(idx2)]
 		isFactor = isFactor[names(idx2)]
