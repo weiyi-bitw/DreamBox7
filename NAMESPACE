@@ -1,5 +1,6 @@
 useDynLib(DreamBox7)
 importFrom(survival, coxph, survConcordance)
+importFrom(caret, createFolds)
 export(logRankScore, 
 	getMI,
 	getMI3,
