@@ -21,7 +21,7 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 #
 #=========================================
 
-BFFS = function(x, surv, folds = 10, randomShuffle = 10000){
+BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2){
 	n = nrow(x) # number of samples
 	m = ncol(x) # number of features
 	
@@ -80,7 +80,7 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000){
 					}	
 				}
 				cat("Randomly shuffle...\n");flush.console()
-				k = min(3, ceiling(bestNumFeatures/2))
+				k = min(kmax, ceiling(bestNumFeatures/2))
 				for(i in 1:randomShuffle){
 					ft = currentBestFeature
 					ft[sample(1:(bestNumFeatures+1), k)] = sample(setdiff(1:m, currentBestFeature), k)
