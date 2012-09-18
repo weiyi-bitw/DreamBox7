@@ -36,7 +36,7 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000){
 		while(TRUE){
 			cat("Test", bestNumFeatures+1, "features...\n");flush.console()
 			currentBestCCDI = 0
-			currentBestFeature = 0
+			currentBestFeature = NULL
 			if(choose(m, bestNumFeatures+1) < randomShuffle){
 				allComb = combn(1:m, bestNumFeatures+1)
 				allCCDI = apply(allComb, 1, function(ii){
@@ -57,21 +57,21 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000){
 						ccdi = getCCDIdx(pred, surv[idx,])
 						if(ccdi > currentBestCCDI){
 							currentBestCCDI = ccdi
-							currentBestFeature = c(ft,i)
+							currentBestFeature = ft
 						}
 					}	
 				}
-				cat("Randomly shuffle...");flush.console()
+				cat("Randomly shuffle...\n");flush.console()
 				k = min(3, ceiling(bestNumFeatures/2))
 				for(i in 1:randomShuffle){
-					ft = currentBestFeatures
-					ft[sample(1:(bestNumFeatures+1), k)] = sample(setdiff(1:m, currentBestFeatures), k)
+					ft = currentBestFeature
+					ft[sample(1:(bestNumFeatures+1), k)] = sample(setdiff(1:m, currentBestFeature), k)
 					cm = coxph(surv[-idx,]~., data=x[-idx, ft])
 					pred = predict(cm, x[idx,ft])
 					ccdi = getCCDIdx(pred, surv[idx,])
 					if(ccdi > currentBestCCDI){
 						currentBestCCDI = ccdi
-						currentBestFeature = c(ft,i)
+						currentBestFeature = ft
 					}
 				}
 			}
