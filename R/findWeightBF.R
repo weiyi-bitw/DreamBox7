@@ -31,6 +31,7 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000){
 
 		bestFeatures = 1
 		bestNumFeatures = 1
+		bestCCDI = 0
 		bestTestCCDI = 0
 		bestW = NULL
 		while(TRUE){
@@ -106,18 +107,19 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000){
 				bestFeatures = currentBestFeature
 				bestNumFeatures = bestNumFeatures + 1
 				bestCCDI = currentBestCCDI
+				bestTestCCDI = currentBestTestCCDI
 				bestW = currentBestW
 				cat("New Best Feature:\n")
 				cat(colnames(x)[bestFeatures], "\n")
 				cat("New Best CCDI:\n")
-				cat(bestCCDI, "\n");flush.console()
+				cat(bestCCDI, " / ", bestTestCCDI, "\n");flush.console()
 			}else{
 				break
 			}
 
 		}	
 		cat("Done.\n");flush.console()
-		return (list(bestFeatures=colnames(x)[bestFeatures], bestNumFeatures=bestNumFeatures, bestCCDI=bestCCDI, bestW = bestW))
+		return (list(bestFeatures=colnames(x)[bestFeatures], bestNumFeatures=bestNumFeatures, bestCCDI=bestCCDI, bestTestCCDI = bestTestCCDI, bestW = bestW))
 	}
 
 	CRFeatures = sapply( CRResults, function(x) x$bestFeatures )
