@@ -28,7 +28,7 @@ void findWeightBF(const double* x, const double* surv, double *w, int *mIn, int 
 
 	
 	ccdi_max = concordance_index(bestPred, surv, n);
-	Rprintf("Starting CCDI: \t%f\n", ccdi_max);
+	if(*verbose==1)Rprintf("Starting CCDI: \t%f\n", ccdi_max);
 
 	memcpy(pred, bestPred, n*sizeof(double));
 	//Rprintf("%d\t%d\n", count, maxIter);
@@ -79,14 +79,15 @@ void findWeightBF(const double* x, const double* surv, double *w, int *mIn, int 
 	free(dW);
 	free(bestPred);
 	free(pred);
-	
-	Rprintf("================\n");
-	Rprintf("Best CCDI found: \t%f \n", ccdi_max);
-	Rprintf("Weights: \n");
-	for(i = 0; i < m; i++) Rprintf("\t%f", w[i]);
-	Rprintf("\n");
-	Rprintf("\nLongest streak: \t%d \n", streak);
-	Rprintf("================\n");
+	if(*verbose == 1){
+		Rprintf("================\n");
+		Rprintf("Best CCDI found: \t%f \n", ccdi_max);
+		Rprintf("Weights: \n");
+		for(i = 0; i < m; i++) Rprintf("\t%f", w[i]);
+		Rprintf("\n");
+		Rprintf("\nLongest streak: \t%d \n", streak);
+		Rprintf("================\n");
 	//Rprintf("Leave C function.\n");
+	}
 }
 
