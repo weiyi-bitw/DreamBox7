@@ -21,7 +21,7 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 #
 #=========================================
 
-BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2){
+BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2, verbose=TRUE){
 	n = nrow(x) # number of samples
 	m = ncol(x) # number of features
 	
@@ -57,6 +57,8 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2){
 				currentBestCCDI = max(allCCDI)
 				currentBestFeature = allComb[,best]
 				currentBestModel = coxph(surv[-idx,]~., data=x[-idx, currentBestFeature])
+				pred = predict(currentBestModel, x[idx,currentBestFeature])
+				currentBestTestCCDI = getCCDIdx(pred, surv[idx,])
 				currentBestW = currentBestModel$coeff
 			}else{
 				cat("Finding new features incrementally ... ");flush.console()
@@ -71,11 +73,16 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2){
 						#ccdi = getCCDIdx(pred, surv[idx,])
 						ccd = cm$concordance
 						ccdi = (ccd[1] + ccd[3]/2) / (ccd[1] + ccd[2] + ccd[3])
-						if(ccdi > currentBestCCDI){
-							currentBestCCDI = ccdi
-							currentBestFeature = ft
-							currentBestW = w
-							currentBestModel = cm
+						if(ccdi > bestCCDI){
+							pred = predict(cm, x[idx,ft])
+							testccdi = getCCDIdx(pred, surv[idx,])
+							if(testccdi > currentBestTestCCDI){
+								currentBestCCDI = ccdi
+								currentBestFeature = ft
+								currentBestW = w
+								currentBestModel = cm
+								currentBestTestCCDI = testccdi
+							}
 						}
 					}	
 				}
@@ -92,27 +99,33 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2){
 					#ccdi = getCCDIdx(pred, surv[idx,])
 					ccd = cm$concordance
 					ccdi = (ccd[1] + ccd[3]/2) / (ccd[1] + ccd[2] + ccd[3])
-					if(ccdi > currentBestCCDI){
-						currentBestCCDI = ccdi
-						currentBestFeature = ft
-						currentBestW = w
-						currentBestModel = cm
+					if(verbose) cat("Features:", colnames(x)[ft], "\tCCDI:", ccdi, "\n");flush.console()
+					
+					if(ccdi > bestCCDI){
+						pred = predict(cm, x[idx,ft])
+						testccdi = getCCDIdx(pred, surv[idx,])
+						if(verbose) cat("\tTest CCDI:", testccdi, "\n");flush.console()
+						if(testccdi > currentBestTestCCDI){
+							currentBestCCDI = ccdi
+							currentBestFeature = ft
+							currentBestW = w
+							currentBestModel = cm
+							currentBestTestCCDI = testccdi
+						}
 					}
 				}
 			}
 			#cat(currentBestCCDI, '\t', bestCCDI, '\n');flush.console()
-			pred = predict(currentBestModel, x[idx, currentBestFeature])
-			currentBestTestCCDI = getCCDIdx(pred, surv[idx,])
+			cat("New Best Feature:\n")
+			cat(colnames(x)[currentBestFeature], "\n")
+			cat("New Best CCDI:\n")
+			cat(currentBestCCDI, " / ", currentBestTestCCDI, "\n");flush.console()
 			if(currentBestTestCCDI > bestTestCCDI){
 				bestFeatures = currentBestFeature
 				bestNumFeatures = bestNumFeatures + 1
 				bestCCDI = currentBestCCDI
 				bestTestCCDI = currentBestTestCCDI
 				bestW = currentBestW
-				cat("New Best Feature:\n")
-				cat(colnames(x)[bestFeatures], "\n")
-				cat("New Best CCDI:\n")
-				cat(bestCCDI, " / ", bestTestCCDI, "\n");flush.console()
 			}else{
 				break
 			}
@@ -125,7 +138,8 @@ BFFS = function(x, surv, folds = 10, randomShuffle = 10000, kmax = 2){
 	CRFeatures = sapply( CRResults, function(x) x$bestFeatures )
 	CRNumFeatures = sapply( CRResults, function(x) x$bestNumFeatures )
 	CRCCDI = sapply(CRResults, function(x) x$bestCCDI )
+	CRTestCCDI = sapply(CRResults, function(x) x$bestTestCCDI)
 	CRBestW = sapply(CRResults, function(x) x$bestW )
 
-	return(list(CRFeatures = CRFeatures, CRNumFeatures=CRNumFeatures, CRCCDI = CRCCDI, CRBestW = CRBestW, foldIndices = foldIndices))
+	return(list(CRFeatures = CRFeatures, CRNumFeatures=CRNumFeatures, CRCCDI = CRCCDI, CRTestCCDI = CRTestCCDI, CRBestW = CRBestW, foldIndices = foldIndices))
 }
