@@ -118,7 +118,7 @@ preproClncKNN=function(c, survobj=NULL, isFactorIn=NULL, dwIn=NULL, ccdi.upper =
 	names(distWeight) = colnames(c)
 	if(!is.null(dwIn)) distWeight = dwIn
 	if(!is.null(survobj)) {
-		idx = which(survobj[,2]==1)
+		idx = which(survobj[,2]==1 | survobj[,1] >= 365*10)
 		cout = c[idx,]
 		tout = survobj[idx, 1]
 		idx2 = which(ccdi > ccdi.upper | ccdi < ccdi.lower)
