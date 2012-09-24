@@ -23,7 +23,4 @@ export(logRankScore,
 	ewknn.predict,
 	preproClncKNN,
 	ewknn.predict.clnc,
-	BFFW,
-	BFFS,
-	qBFFS
 )
