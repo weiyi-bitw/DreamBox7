@@ -1,6 +1,7 @@
 useDynLib(DreamBox7)
 importFrom(survival, coxph, survConcordance)
 importFrom(caret, createFolds)
+importFrom(gbm, gbm.fit)
 export(logRankScore, 
 	getMI,
 	getMI3,
@@ -13,8 +14,11 @@ export(logRankScore,
 	getAllCorWz,
 	findCorrAttractor,
 	CreateMetageneSpace,
+	CreateGeneSpace,
+	expandClnc,
 	getCCDIdx,
 	getAllCCDIWz,
+	gbm.cvrun,
 	ewknn.impute,
 	ewknn.predict,
 	preproClncKNN,
