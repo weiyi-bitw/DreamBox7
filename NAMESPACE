@@ -18,9 +18,5 @@ export(logRankScore,
 	expandClnc,
 	getCCDIdx,
 	getAllCCDIWz,
-	gbm.cvrun,
-	ewknn.impute,
-	ewknn.predict,
-	preproClncKNN,
-	ewknn.predict.clnc,
+	gbm.cvrun
 )
