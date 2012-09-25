@@ -16,8 +16,9 @@
 	"We hope one day cancer patients can be profiled by several metagenes indicating \n",
 	"important biomolecular events of the disease such as chromosomal instability, \n",
 	"invasiveness, or lymphocyte responses, instead of mutually exclusive subtypes.\n",
-	"This may lead to a more comprehensive understanding of cancer, a better prognosis,\n ",
-	"and even new druggable targets! Let's get it started! #RiseAboveCancer\n",
+	"This may lead to a more comprehensive understanding of cancer, a better prognosis,\n",
+	"and even new druggable targets! Let's get it started! \n",
+	"                                                           Wei-Yi Cheng 09/24/2012\n",
 	"\n"
 	)
 }
