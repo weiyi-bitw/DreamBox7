@@ -11,7 +11,7 @@
 	"Welcome to DreamBox7 package!\n\n",
 	" -- Brought to you by Wei-Yi Cheng and Team Attractor Metagenes.\n\n",
 	"===============================\n\n",
-	"Aren't Attractor Metagenes awesome? If you agree, please recommend our paper at  \n",
+	"Do you find attractor metagenes useful? If you agree, please recommend our paper at  \n",
 	"http://arxiv.org/abs/1204.6538 to everybody and help us further spread the idea!\n",
 	"We hope one day cancer patients can be profiled by several metagenes indicating \n",
 	"important biomolecular events of the disease such as chromosomal instability, \n",
