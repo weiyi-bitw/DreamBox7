@@ -19,5 +19,6 @@ export(logRankScore,
 	expandClnc,
 	getCCDIdx,
 	getAllCCDIWz,
-	gbm.cvrun
+	gbm.cvrun,
+	BFFW
 )
