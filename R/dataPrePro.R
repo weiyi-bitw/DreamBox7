@@ -1,8 +1,11 @@
-meanImputationClnc <- function(c){
-  idx = is.na(c$size)
-  if(length(idx) > 0) c$size[idx] = round(mean(c$size, na.rm=TRUE))
-  idx = is.na(c$lymph_nodes_positive)
-  if(length(idx) > 0) c$lymph_nodes_positive[idx] = round(mean(c$lymph_nodes_positive, na.rm=TRUE))
+lazyImputationClnc <- function(c){ # so i'm lazy, bite me!
+  for(i in 1:ncol(c)){
+    idx = which(is.na(c[,i]))
+    if(length(idx) > 0){
+      if(class(c[,i])=="numeric") c[idx,i] = mean(c[,i], na.rm=TRUE)
+      if(class(c[,i])=="factor") c[idx,i] = 0
+    }
+  }
   return (c)
 }
 
