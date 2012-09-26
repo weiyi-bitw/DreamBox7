@@ -4,7 +4,9 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   metaSpace = matrix(NA, nrow=nMeta, ncol=ncol(ge))
   dimnames(metaSpace) = list(names(attractome), colnames(ge))
   pbs = list()
-  mappedGenes = map[rownames(ge),1]
+  mappedGenes = rep(NA, nrow(ge))
+  names(mappedGenes) = rownames(ge)
+  mappedGenes[rownames(map)] = map[,1]
   for (i in 1:nMeta){
     #cat(i, "\n")
     #flush.console()
