@@ -1,3 +1,11 @@
+meanImputationClnc <- function(c){
+  idx = is.na(c$size)
+  if(length(idx) > 0) c$size[idx] = round(mean(c$size, na.rm=TRUE))
+  idx = is.na(c$lymph_nodes_positive)
+  if(length(idx) > 0) c$lymph_nodes_positive[idx] = round(mean(c$lymph_nodes_positive, na.rm=TRUE))
+  return (c)
+}
+
 CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   if(is.null(chosenProbes)) {
   nMeta = length(attractome)
@@ -125,16 +133,16 @@ expandClnc = function(c){
   gd.2 = as.numeric(c$grade==2)
   gd.3 = as.numeric(c$grade==3)
 
-  her2.1 = as.numeric(c$HER2_IHC_status==1)
-  her2.2 = as.numeric(c$HER2_IHC_status==2)
-  her2.3 = as.numeric(c$HER2_IHC_status==3)
+  #her2.1 = as.numeric(c$HER2_IHC_status==1)
+  #her2.2 = as.numeric(c$HER2_IHC_status==2)
+  #her2.3 = as.numeric(c$HER2_IHC_status==3)
   
   her2.snp6.gain = as.numeric(c$HER2_SNP6_state=="GAIN")
   her2.snp6.loss = as.numeric(c$HER2_SNP6_state=="LOSS")
   her2.snp6.neut = as.numeric(c$HER2_SNP6_state=="NEUT")
   
   cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
-                   er.N, er.P, tr.CT, tr.HT, tr.RT, her2.1, her2.2, her2.3, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal)
+                   er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
   for(i in 4:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
   }
