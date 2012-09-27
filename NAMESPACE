@@ -15,10 +15,12 @@ export(logRankScore,
 	findCorrAttractor,
 	CreateMetageneSpace,
 	CreateGeneSpace,
-	lazyImputationDFClnc,
+	lazyImputeDFClnc,
 	expandClnc,
 	getCCDIdx,
 	getAllCCDIWz,
 	gbm.cvrun,
-	BFFW
+	BFFW,
+	ewknn.predict,
+	preproClncKNN
 )
