@@ -9,6 +9,26 @@ lazyImputationClnc <- function(c){ # so i'm lazy, bite me!
   return (c)
 }
 
+lazyImputeDFClnc = function(c){
+  idx = grep("NOT_IN_OSLOVAL",colnames(c))
+  if(length(idx) > 0) c = c[,-idx]
+  idx = grep(".Expr", colnames(c))
+  if(length(idx) > 0) c = c[,-idx]
+  idx = grep("HER2_IHC", colnames(c))
+  if(length(idx) > 0) c = c[,-idx]
+  for(i in 1:ncol(c)){
+    idx = which(is.na(c[,i]))
+    if(length(idx) > 0){
+      if(class(c[,i]) == "numeric") c[idx, i] = mean(c[-idx,i])
+      if(class(c[,i]) == "factor" ){ 
+        cc = as.vector(c[,i])
+	cc[idx] = "NA"
+	c[, i] = factor(cc)
+	}
+    }
+  }
+  return (c)
+}
 CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   if(is.null(chosenProbes)) {
   nMeta = length(attractome)
