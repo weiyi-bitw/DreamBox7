@@ -22,5 +22,6 @@ export(logRankScore,
 	gbm.cvrun,
 	BFFW,
 	ewknn.predict,
+	ewknn.predict.clnc,
 	preproClncKNN
 )
