@@ -48,7 +48,7 @@ lazyImputeDFClncFull = function(c){
       if(class(c[,i]) == "factor" ){
         cc = as.vector(c[,i])
         cc[idx] = "NA"
-        c[, i] = factor(cc)
+	levels(c[,i]) <- c(levels(c[,i]), "NA")
         }
     }
   }
@@ -195,6 +195,7 @@ expandClnc = function(c){
                    er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
   for(i in 4:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
+    levels(cmat[,i]) = c(0, 1)
   }
   return(cmat)
 }
@@ -255,6 +256,7 @@ expandClncFull = function(c){
                    er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut, grp.1, grp.2, grp.3, grp.4, stg.0, stg.1, stg.2, stg.3, stg.4, st.1, st.2, st.3, st.4, st.5)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
   for(i in 4:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
+    levels(cmat[,i]) = c(0, 1)
   }
   return(cmat)
 }
