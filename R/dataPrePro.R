@@ -23,7 +23,7 @@ lazyImputeDFClnc = function(c){
       if(class(c[,i]) == "factor" ){ 
         cc = as.vector(c[,i])
 	cc[idx] = "NA"
-	c[, i] = factor(cc)
+	levels(c[,i]) <- c(levels(c[,i]), "NA")
 	}
     }
   }
