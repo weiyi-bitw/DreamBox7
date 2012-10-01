@@ -48,6 +48,7 @@ BFFS = function(x, surv, numFeatures = 8, randomShuffle = 10000, k = 2, verbose=
 			ft = bestFeature
 		}
 		if(count %% 1000 == 0) cat(count, "\n");flush.console()
+		count = count + 1
 	}
 	cat("Done.\n");flush.console()
 	return (list(bestFeatures=colnames(x)[bestFeature], bestCCDI=bestCCDI))

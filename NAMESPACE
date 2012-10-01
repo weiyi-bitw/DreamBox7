@@ -23,6 +23,7 @@ export(logRankScore,
 	getAllCCDIWz,
 	gbm.cvrun,
 	BFFW,
+	BFFS,
 	ewknn.predict,
 	ewknn.predict.clnc,
 	preproClncKNN
