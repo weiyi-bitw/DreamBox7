@@ -31,7 +31,7 @@ BFFS = function(x, surv, numFeatures = 8, randomShuffle = 10000, k = 2, verbose=
 	ccd = cm$concordance
 	ccdi = (ccd[1] + ccd[3]/2) / (ccd[1] + ccd[2] + ccd[3])
 	bestCCDI = ccdi
-	bestFeatures = ft
+	bestFeature = ft
 	while( count < randomShuffle ){
 		idx = sample(1:numFeatures, k)
 		ft[idx] = sample(setdiff(1:m, ft[-idx]), k)
