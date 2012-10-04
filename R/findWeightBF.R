@@ -21,37 +21,68 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 #
 #=========================================
 
-BFFS = function(x, surv, numFeatures = 8, randomShuffle = 10000, k = 2, verbose=TRUE){
+BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=TRUE, train.fraction=0.6, rounds = 10, seed=913){
+	set.seed(seed)
 	n = nrow(x) # number of samples
 	m = ncol(x) # number of features
 
+	out = list()
+
+	for(r in 1:rounds){
+	idx.train = sample(1:n, floor(train.fraction * n))
 	count = 0
 	ft = 1:numFeatures
-	cm = coxph(surv~., data=x[,ft])
+	cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
 	ccd = cm$concordance
-	ccdi = (ccd[1] + ccd[3]/2) / (ccd[1] + ccd[2] + ccd[3])
+	ccdi = (ccd[1]) / (ccd[1] + ccd[2])
 	bestCCDI = ccdi
 	bestFeature = ft
+	bestCM = cm
+
 	while( count < randomShuffle ){
 		idx = sample(1:numFeatures, k)
 		ft[idx] = sample(setdiff(1:m, ft[-idx]), k)
-		cm = coxph(surv~., data=x[,ft])
+		cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
 		ccd = cm$concordance
-		ccdi = (ccd[1] + ccd[3]/2) / (ccd[1] + ccd[2] + ccd[3])
+		ccdi = ccd[1] / (ccd[1] + ccd[2])
 		if(ccdi > bestCCDI){
 			cat("New CCDI:\t", ccdi, "\n");flush.console()
 			bestCCDI = ccdi
 			cat("New feature: \n\t", colnames(x)[ft], "\n");flush.console()
 			bestFeature = ft
+			bestCM = cm
 			count = 0
 		}else{
 			ft = bestFeature
 		}
-		if(count %% 1000 == 0) cat(count, "\n");flush.console()
 		count = count + 1
+		if(count %% 1000 == 0) cat(count, "\n");flush.console()
+	}
+
+	out[[r]] = list(bestFeatures=colnames(x)[bestFeature], bestCCDI=bestCCDI, bestCM = cm)
+
 	}
 	cat("Done.\n");flush.console()
-	return (list(bestFeatures=colnames(x)[bestFeature], bestCCDI=bestCCDI))
+	return (out)
+}
+
+BICFS = function(x, surv, verbose=FALSE, train.fraction=0.6, rounds=10, seed=913){
+	set.seed(seed)
+	n = nrow(x)
+	m = ncol(x)
+
+	out = list()
+	for(r in 1:rounds){
+		cat("Round " + t + '...\n');flush.console()
+		idx.train=sample(1:n, floor(train.fraction * n))
+		xt = x[idx.train,]
+		survt = surv[idx.train,]
+		upper = terms(survt~., data=xt)
+		cm = step(coxph(survt~1, data=xt), scope=upper, direction="both", k=log(n), trace=verbose)
+		out[[r]] = list(bestFeatures = attr(cm$term, "term.labels"), bestCM = cm)
+	}
+	cat("Done.\n");flush.console()
+	return (out)
 }
 
 
