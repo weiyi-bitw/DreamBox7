@@ -61,7 +61,8 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   pbs = list()
   mappedGenes = rep(NA, nrow(ge))
   names(mappedGenes) = rownames(ge)
-  mappedGenes[rownames(map)] = map[,1]
+  idx = intersect(rownames(ge) , rownames(map))
+  mappedGenes[idx] = map[idx,1]
   for (i in 1:nMeta){
     #cat(i, "\n")
     #flush.console()
