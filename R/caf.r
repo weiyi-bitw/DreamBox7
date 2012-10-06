@@ -17,6 +17,7 @@ attractorScanningGL = function(data, genome, alpha=(2:12)/2, windowSize = 50, ma
 		winspan = floor(windowSize/2)
 		wd = genes.genome[max(1, idx.center - winspan) : min(mg, idx.center+winspan)]
 		wd = intersect(wd, genes.data)
+		#print(wd)
 		if(length(wd) < num.output){
 			alist[[i]] = NA
 			next
