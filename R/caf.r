@@ -16,12 +16,12 @@ attractorScanningGL = function(data, genome, alpha=(2:12)/2, windowSize = 50, ma
 		idx.center = which(genes.genome == genes.data[i])
 		winspan = floor(windowSize/2)
 		wd = genes.genome[max(1, idx.center - winspan) : min(mg, idx.center+winspan)]
-		
+		wd = intersect(wd, genes.data)
 		if(length(wd) < num.output){
 			alist[[i]] = NA
 			next
 		}
-		dataIn = data[intersect(wd, genes.data),]
+		dataIn = data[wd,]
 		mi = getAllMIWz(dataIn, dataIn[genes.data[i],], bin=bin, so=so, negateMI=negateMI)
 		premi = mi
 		for(a in alpha){
