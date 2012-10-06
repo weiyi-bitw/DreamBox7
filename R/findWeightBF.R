@@ -66,22 +66,22 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 	return (out)
 }
 
-BICFS = function(x, surv, verbose=FALSE, train.fraction=0.6, rounds=10, seed=913){
+BICFS = function(x, surv, verbose=FALSE, train.fraction=0.6, rounds=10, seed=913, k = 2){
 	set.seed(seed)
 	n = nrow(x)
 	m = ncol(x)
 
 	out = list()
 	for(r in 1:rounds){
-		cat("Round " + t + '...\n');flush.console()
+		if(verbose) cat("Round" , r , '...\n');flush.console()
 		idx.train=sample(1:n, floor(train.fraction * n))
 		xt = x[idx.train,]
 		survt = surv[idx.train,]
 		upper = terms(survt~., data=xt)
-		cm = step(coxph(survt~1, data=xt), scope=upper, direction="both", k=log(n), trace=verbose)
+		cm = step(coxph(survt~1, data=xt), scope=upper, direction="both", k=2, trace=verbose)
 		out[[r]] = list(bestFeatures = attr(cm$term, "term.labels"), bestCM = cm)
 	}
-	cat("Done.\n");flush.console()
+	if(verbose)cat("Done.\n");flush.console()
 	return (out)
 }
 
