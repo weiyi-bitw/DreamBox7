@@ -78,9 +78,53 @@ attractorScanningGL = function(data, genome, alpha=(2:12)/2, windowSize = 50, ma
 		}
 
 	}	
-	
-	return(list(attractome=aglist, score=ascore, bestAlphas = aalpha, scoremat = alist))
+	cat("Summarizing output...");flush.console()
+	out = list(attractome=aglist, score=ascore, bestAlphas = aalpha, scoremat = alist)
+	sumOut = summarizeAttractorScanning(out, genes.genome)
+	cat("done.\n");flush.console()
+	return (sumOut)
+}
 
+summarizeAttractorScanning = function(out, genes.genome, windowSize=50){
+	topIdx = sapply(out$attractome[1,], function(x){which(genes.genome==x)})
+	o = order(out$score, decreasing=T)
+	sumOut = NULL
+	center = NULL
+	while(length(o) > 0){
+		o.top = o[1]
+		#print(length(o))
+		#print(o.top)
+		sumOut = rbind(sumOut,c(out$attractome[,o[1]], out$score[o[1]]))
+		center = c(center, colnames(out$attractome)[o[1]])
+		idxDiff = abs(topIdx - topIdx[o.top])
+		killIdx = which(idxDiff <= (windowSize))
+		if(length(killIdx) == 0) break
+		o = setdiff(o, killIdx)
+	}
+	rownames(sumOut) = center
+	return (sumOut)
+}
+
+findCytoband = function(sumOut, genome){
+	genes.genome = rownames(genome)
+	cytoband = apply(sumOut, 1, 
+	function(a, genes.genome, genome){
+		genes = a[1:(length(a)-1)]
+		idx = which(genes.genome %in% genes)
+		cys = genome[idx, "Cytoband"]
+		cys = cys[!is.na(cys)]
+		start = cys[1]
+		end = cys[length(cys)]
+		if(start == end){
+			cy = paste(genome[idx[1],"Chr"], start, sep="")
+		}else{
+			cy = paste(genome[idx[1],"Chr"], start, "-", end, sep="")
+		}
+		return(cy)
+	}, genes.genome=genes.genome, genome=genome
+	)
+	out = cbind(cytoband, sumOut)
+	return (out)
 }
 
 
