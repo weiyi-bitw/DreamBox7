@@ -31,12 +31,13 @@ lazyImputeDFClnc = function(c){
 }
 lazyImputeDFClncFULL = function(c){
   c$NOT_IN_OSLOVAL_stage <- factor(c$NOT_IN_OSLOVAL_stage)
-  killIdx = NULL
-  for(i in 1:ncol(c)){
-    mis = sum(is.na(c[,i]))
-    if(mis > (nrow(c) * 0.3) ) killIdx = c(killIdx , i)
-  }
-  c = c[,-killIdx]
+  class(c$HER2_IHC_status) = "factor"
+  #killIdx = NULL
+  #for(i in 1:ncol(c)){
+  #  mis = sum(is.na(c[,i]))
+  #  if(mis > (nrow(c) * 0.3) ) killIdx = c(killIdx , i)
+  #}
+  #c = c[,-killIdx]
   idx = grep(".Expr", colnames(c))
   if(length(idx) > 0) c = c[,-idx]
 
@@ -196,46 +197,6 @@ expandClnc = function(c){
   }
   return(cmat)
 }
-expandClncFULL = function(c){
-  h.IDC =as.numeric(c$histological_type=="IDC")
-  h.ILC =as.numeric(c$histological_type=="ILC")
-  h.IDCpILC =as.numeric(c$histological_type=="IDC+ILC")
-  h.IDCnMED =as.numeric(c$histological_type=="IDC-MED")
-  h.IDCnMUC =as.numeric(c$histological_type=="IDC-MUC")
-  h.IDCnTUB =as.numeric(c$histological_type=="IDC-TUB")
-  #h.MIXED =as.numeric(c$histological_type=="MIXED NST AND A SPECIAL TYPE")
-  #h.OTHER =as.numeric(c$histological_type=="OTHER")
-  #h.OTHERINV =as.numeric(c$histological_type=="OTHER INVASIVE")
-  #h.INVTUMOR =as.numeric(c$histological_type=="INVASIVE TUMOR")
-  h.other = as.numeric(c$histological_type=="MIXED NST AND A SPECIAL TYPE" | c$histological_type=="OTHER" | c$histological_type=="OTHER INVASIVE" | c$histological_type=="INVASIVE TUMOR" | c$histological_type=="PHYL")
-
-  er.P=as.numeric(c$ER_IHC_status=="pos")
-  er.N=as.numeric(c$ER_IHC_status=="neg")
-  
-  tr.CT = as.numeric((c$Treatment == "CT") | (c$Treatment == "CT/HT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT"))
-  tr.HT = as.numeric((c$Treatment == "HT") | (c$Treatment == "CT/HT") | (c$Treatment == "HT/RT") | (c$Treatment =="CT/HT/RT"))
-  tr.RT = as.numeric((c$Treatment == "RT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT") | (c$Treatment == "HT/RT"))
-  trMat = cbind(tr.CT, tr.HT, tr.RT)
-
-  gd.1 = as.numeric(c$grade==1)
-  gd.2 = as.numeric(c$grade==2)
-  gd.3 = as.numeric(c$grade==3)
-
-  #her2.1 = as.numeric(c$HER2_IHC_status==1)
-  #her2.2 = as.numeric(c$HER2_IHC_status==2)
-  #her2.3 = as.numeric(c$HER2_IHC_status==3)
-  
-  her2.snp6.gain = as.numeric(c$HER2_SNP6_state=="GAIN")
-  her2.snp6.loss = as.numeric(c$HER2_SNP6_state=="LOSS")
-  her2.snp6.neut = as.numeric(c$HER2_SNP6_state=="NEUT")
-  
-  cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
-                   er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
-  for(i in 4:ncol(cmat)){
-    cmat[,i] = factor(cmat[,i])
-  }
-  return(cmat)
-}
 
 expandClncFULL = function(c){
   h.IDC =as.numeric(c$histological_type=="IDC")
@@ -272,9 +233,9 @@ expandClncFULL = function(c){
   stg.2 = as.numeric(c$NOT_IN_OSLOVAL_stage==2)
   stg.3 = as.numeric(c$NOT_IN_OSLOVAL_stage==3 | c$NOT_IN_OSLOVAL_stage==4)
 
-  #her2.1 = as.numeric(c$HER2_IHC_status==1)
-  #her2.2 = as.numeric(c$HER2_IHC_status==2)
-  #her2.3 = as.numeric(c$HER2_IHC_status==3)
+  her2.1 = as.numeric(c$HER2_IHC_status==1)
+  her2.2 = as.numeric(c$HER2_IHC_status==2)
+  her2.3 = as.numeric(c$HER2_IHC_status==3)
   
   her2.snp6.gain = as.numeric(c$HER2_SNP6_state=="GAIN")
   her2.snp6.loss = as.numeric(c$HER2_SNP6_state=="LOSS")
@@ -286,9 +247,45 @@ expandClncFULL = function(c){
   st.4 = as.numeric(c$NOT_IN_OSLOVAL_Site==4)
   st.5 = as.numeric(c$NOT_IN_OSLOVAL_Site==5)
 
-  cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
-                   er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut, grp.1, grp.2, grp.3, grp.4, stg.0, stg.1, stg.2, stg.3, st.1, st.2, st.3, st.4, st.5)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
-  for(i in 4:ncol(cmat)){
+  mnpsl.pre = as.numeric(c$NOT_IN_OSLOVAL_menopausal_status_inferred=="pre" )
+  mnpsl.post = as.numeric(c$NOT_IN_OSLOVAL_menopausal_status_inferred=="post" )
+
+  cell.hi = as.numeric(c$NOT_IN_OSLOVAL_cellularity == "high")
+  cell.mod = as.numeric(c$NOT_IN_OSLOVAL_cellularity == "moderate")
+  cell.lo = as.numeric(c$NOT_IN_OSLOVAL_cellularity == "low")
+
+  p.LumA = as.numeric(c$NOT_IN_OSLOVAL_Pam50Subtype == "LumA")
+  p.LumB = as.numeric(c$NOT_IN_OSLOVAL_Pam50Subtype == "LumB")
+  p.Basal = as.numeric(c$NOT_IN_OSLOVAL_Pam50Subtype == "Basal")
+  p.Her2 = as.numeric(c$NOT_IN_OSLOVAL_Pam50Subtype == "Her2")
+  p.Normal = as.numeric(c$NOT_IN_OSLOVAL_Pam50Subtype == "Normal")
+
+  p53.mut = as.numeric(c$NOT_IN_OSLOVAL_P53_mutation_status == "MUT")
+  p53.wt = as.numeric(c$NOT_IN_OSLOVAL_P53_mutation_status == "WT")
+
+  ic.1 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==1)
+  ic.2 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==2)
+  ic.3 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==3)
+  ic.4 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==4)
+  ic.5 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==5)
+  ic.6 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==6)
+  ic.7 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==7)
+  ic.8 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==8)
+  ic.9 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==9)
+  ic.10 = as.numeric(c$NOT_IN_OSLOVAL_IntClustMemb==10)
+
+  gf.nn = as.numeric(c$NOT_IN_OSLOVAL_Genefu == "ER-/HER2-")
+  gf.pnhi = as.numeric(c$NOT_IN_OSLOVAL_Genefu == "ER+/HER2- High Prolif")
+  gf.pnlo = as.numeric(c$NOT_IN_OSLOVAL_Genefu == "ER+/HER2- Low Prolif")
+  gf.p = as.numeric(c$NOT_IN_OSLOVAL_Genefu == "HER2+")
+
+
+  cmat<-data.frame(c[, c(1:3, 12:13)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
+                   er.N, er.P, tr.CT, tr.HT, tr.RT, her2.1, her2.2, her2.3, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut, 
+		grp.1, grp.2, grp.3, grp.4, stg.0, stg.1, stg.2, stg.3, st.1, st.2, st.3, st.4, st.5, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, 
+		mnpsl.pre, mnpsl.post, cell.hi, cell.mod, cell.lo, p53.mut, p53.wt, gf.nn, gf.pnhi, gf.pnlo, gf.p,
+		ic.1, ic.2, ic.3, ic.4, ic.5, ic.6, ic.7, ic.8, ic.9, ic.10)
+  for(i in 6:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
   }
   return(cmat)

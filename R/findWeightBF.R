@@ -66,23 +66,22 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 	return (out)
 }
 
-BICFS = function(x, surv, verbose=FALSE, cvFolds = 3, cvRounds=3, seed=121229, k = 2){
+BICFS = function(x, surv, verbose=FALSE, rounds = 10, train.fraction=0.4, seed=121229, k = 2){
 	n = nrow(x)
 	m = ncol(x)
 
-	foldIndices = NULL
-	for(i in 1:cvRounds) {
-		set.seed(seed + i) # my wedding day @ Taiwan <3 come come!!
-		foldIndices = c(foldIndices, createFolds(1:n, k=cvFolds, list=TRUE) )
+	foldIndices = list()
+	for(i in 1:rounds){
+		set.seed(seed + i)
+		foldIndices[[i]] = sample(1:n, floor(n*train.fraction))
 	}
-	totalCV = cvRounds * cvFolds
 	out = list()
-	for(r in 1:totalCV){
+	for(r in 1:rounds){
 		if(verbose) cat("Round" , r , '...\n');flush.console()
-		idx.test=foldIndices[[r]]
-		if(verbose) print(idx.test)
-		xt = x[-idx.test,]
-		survt = surv[-idx.test,]
+		idx.train=foldIndices[[r]]
+		if(verbose) print(idx.train)
+		xt = x[idx.train,]
+		survt = surv[idx.train,]
 		upper = terms(survt~., data=xt)
 		cm = step(coxph(survt~1, data=xt), scope=upper, direction="both", k=k, trace=verbose)
 		out[[r]] = list(bestFeatures = attr(cm$term, "term.labels"), bestCM = cm)
