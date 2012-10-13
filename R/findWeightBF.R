@@ -21,20 +21,26 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 #
 #=========================================
 
-BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=TRUE, train.fraction=0.6, rounds = 10, seed=913){
+BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=TRUE, train.fraction=0.5, rounds = 10, idx.train = NULL, seed=913){
 	set.seed(seed)
 	n = nrow(x) # number of samples
 	m = ncol(x) # number of features
 
 	out = list()
 
+	if(is.null(idx.train)){
+
+
 	for(r in 1:rounds){
 	idx.train = sample(1:n, floor(train.fraction * n))
 	count = 0
 	ft = 1:numFeatures
 	cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
-	ccd = cm$concordance
-	ccdi = (ccd[1]) / (ccd[1] + ccd[2])
+	p = predict(cm, x[-idx.train,ft])
+	ccdi = getCCDIdx(p, surv[-idx.train,])
+	#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+	#ccd = cm$concordance
+	#ccdi = (ccd[1]) / (ccd[1] + ccd[2])
 	bestCCDI = ccdi
 	bestFeature = ft
 	bestCM = cm
@@ -43,8 +49,11 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 		idx = sample(1:numFeatures, k)
 		ft[idx] = sample(setdiff(1:m, ft[-idx]), k)
 		cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
-		ccd = cm$concordance
-		ccdi = ccd[1] / (ccd[1] + ccd[2])
+		p = predict(cm, x[-idx.train,ft])
+		ccdi = getCCDIdx(p, surv[-idx.train,])
+		#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+		#ccd = cm$concordance
+		#ccdi = ccd[1] / (ccd[1] + ccd[2])
 		if(ccdi > bestCCDI){
 			cat("New CCDI:\t", ccdi, "\n");flush.console()
 			bestCCDI = ccdi
@@ -59,11 +68,49 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 		if(count %% 1000 == 0) cat(count, "\n");flush.console()
 	}
 
-	out[[r]] = list(bestFeatures=colnames(x)[bestFeature], bestCCDI=bestCCDI, bestCM = cm)
+	out[[r]] = list(bestFeatures=colnames(x)[bestFeature], bestCCDI=bestCCDI, bestCM = bestCM)
 
 	}
 	cat("Done.\n");flush.console()
 	return (out)
+
+
+	}else{
+		count = 0
+		ft = 1:numFeatures
+		cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+		p = predict(cm, x[-idx.train,ft])
+		ccdi = getCCDIdx(p, surv[-idx.train,])
+		bestCCDI = ccdi
+		bestFeature = ft
+		bestCM = cm
+
+		while( count < randomShuffle ){
+			idx = sample(1:numFeatures, k)
+			ft[idx] = sample(setdiff(1:m, ft[-idx]), k)
+			cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+			p = predict(cm, x[-idx.train,ft])
+			ccdi = getCCDIdx(p, surv[-idx.train,])
+			if(ccdi > bestCCDI){
+				cat("New CCDI:\t", ccdi, "\n");flush.console()
+				bestCCDI = ccdi
+				cat("New feature: \n\t", colnames(x)[ft], "\n");flush.console()
+				bestFeature = ft
+				bestCM = cm
+				count = 0
+			}else{
+				ft = bestFeature
+			}
+		count = count + 1
+		if(count %% 1000 == 0) cat(count, "\n");flush.console()
+		}
+
+		out = list(bestFeatures=colnames(x)[bestFeature], bestCCDI=bestCCDI, bestCM = bestCM)
+
+		cat("Done.\n");flush.console()
+		return (out)
+
+	}
 }
 
 BICFS = function(x, surv, verbose=FALSE, rounds = 10, train.fraction=0.4, seed=121229, k = 2){
