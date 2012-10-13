@@ -292,3 +292,18 @@ expandClncFULL = function(c){
   }
   return(cmat)
 }
+
+getTags = function(ft){
+	taglist = strsplit(ft, "\\.")
+	tags = sapply(taglist, function(x){x[1]})
+	return (tags)
+}
+
+removeTaggedFeatures = function(colName, ft){
+	t = getTags(colName)
+	tags = getTags(ft)
+	killIdx = which(t %in% tags)
+	out = colName[-killIdx]
+	return (out)
+}
+
