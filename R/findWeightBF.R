@@ -51,7 +51,7 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 		#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
 		#p = predict(cm, x[-idx.train,ft])
 		#ccdi = getCCDIdx(p, surv[-idx.train,])
-		cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+		cm = coxph(surv~., data=x[,ft])
 		ccd = cm$concordance
 		ccdi = ccd[1] / (ccd[1] + ccd[2])
 		if(ccdi > bestCCDI){
