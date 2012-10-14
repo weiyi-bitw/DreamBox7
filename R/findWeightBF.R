@@ -32,15 +32,15 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 
 
 	for(r in 1:rounds){
-	idx.train = sample(1:n, floor(train.fraction * n))
+	#idx.train = sample(1:n, floor(train.fraction * n))
 	count = 0
 	ft = 1:numFeatures
-	cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
-	p = predict(cm, x[-idx.train,ft])
-	ccdi = getCCDIdx(p, surv[-idx.train,])
 	#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
-	#ccd = cm$concordance
-	#ccdi = (ccd[1]) / (ccd[1] + ccd[2])
+	#p = predict(cm, x[-idx.train,ft])
+	#ccdi = getCCDIdx(p, surv[-idx.train,])
+	cm = coxph(surv~., data=x[,ft])
+	ccd = cm$concordance
+	ccdi = (ccd[1]) / (ccd[1] + ccd[2])
 	bestCCDI = ccdi
 	bestFeature = ft
 	bestCM = cm
@@ -48,12 +48,12 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 	while( count < randomShuffle ){
 		idx = sample(1:numFeatures, k)
 		ft[idx] = sample(setdiff(1:m, ft[-idx]), k)
-		cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
-		p = predict(cm, x[-idx.train,ft])
-		ccdi = getCCDIdx(p, surv[-idx.train,])
 		#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
-		#ccd = cm$concordance
-		#ccdi = ccd[1] / (ccd[1] + ccd[2])
+		#p = predict(cm, x[-idx.train,ft])
+		#ccdi = getCCDIdx(p, surv[-idx.train,])
+		cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+		ccd = cm$concordance
+		ccdi = ccd[1] / (ccd[1] + ccd[2])
 		if(ccdi > bestCCDI){
 			cat("New CCDI:\t", ccdi, "\n");flush.console()
 			bestCCDI = ccdi
