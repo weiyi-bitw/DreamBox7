@@ -177,6 +177,20 @@ testNA = function(i){
 	return (out)
 }
 
+lowerTriIndex = function(m, diag=FALSE){
+	if(diag){
+		n = m * (m+1) / 2
+	}else{
+		n = m * (m-1) / 2
+	}
+	x = rep(-1, n)
+	y = rep(-1, n)
+	out = .C("lowerTriIndex", x=as.integer(x), y=as.integer(y), m = as.integer(m), diag=as.integer(diag))
+
+	return(list(x=out$x+1, y=out$y+1))	
+}
+
+
 # test.c(a)
 
 # dyn.unload("call_c.so")

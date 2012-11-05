@@ -30,5 +30,6 @@ export(logRankScore,
 	BICFS,
 	ewknn.predict,
 	ewknn.predict.clnc,
-	preproClncKNN
+	preproClncKNN,
+	lowerTriIndex
 )
