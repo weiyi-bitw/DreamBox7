@@ -25,3 +25,4 @@ void mi3(const double *, const double *, const double *, int *, int *, int *, do
 void mi2DiffBins(const double *, const double *, int *, int *, int *, int *, int *, double *, int *, int *);
 void mi2vs1(const double *, const double *, const double *, int *, int *, int *, double *, int *);
 void getAllMIWz(const double *, const double* , double *, int *, int *, int *, int *, int *, int *);
+void getAllPWMIWz(const double *, double *, int *, int *, int *, int *, int *, int *);

@@ -21,7 +21,7 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 #
 #=========================================
 
-BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=TRUE, train.fraction=0.5, rounds = 10, idx.train = NULL, seed=913){
+BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=TRUE, train.fraction=0.5, rounds = 10, idx.train = NULL, ft.init=NULL,  seed=913){
 	set.seed(seed)
 	n = nrow(x) # number of samples
 	m = ncol(x) # number of features
@@ -34,7 +34,11 @@ BFFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, k = 2, verbose=
 	for(r in 1:rounds){
 	#idx.train = sample(1:n, floor(train.fraction * n))
 	count = 0
-	ft = 1:numFeatures
+	if(is.null(ft.init)){
+		ft = 1:numFeatures
+	}else{
+		ft = ft.init
+	}
 	#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
 	#p = predict(cm, x[-idx.train,ft])
 	#ccdi = getCCDIdx(p, surv[-idx.train,])

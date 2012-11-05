@@ -121,6 +121,24 @@ getAllMIWz = function(x, vec, bin=6, so=3, rankBased=FALSE, normalize = TRUE, so
   return (mi)
 }
 
+getAllPWMIWz = function(x, bin=6, so=3, rankBased=FALSE, normalize = TRUE, negateMI = FALSE){
+  m = nrow(x)
+  n = ncol(x)
+  if(so >= bin){stop("spline order must be less than bin")}
+
+  if(rankBased){
+    for(i in 1:m){
+      x[i,] = rank(x[i,])
+    } 
+    vec = rank(vec)
+  }
+  garbage = rep(-1, m*(m-1)/2)
+  out = .C("getAllPWMIWz", data = as.double(x), mi = as.double(garbage), m = as.integer(m), n = as.integer(n), bin = as.integer(bin),so = as.integer(so), norm=as.integer(normalize), negateMI = as.integer(negateMI))
+
+  mi = out$mi
+  return (mi)
+}
+
 getAllCorWz = function(x, vec, rankBased=FALSE, sorting=FALSE){
   m = nrow(x)
   n = ncol(x)
