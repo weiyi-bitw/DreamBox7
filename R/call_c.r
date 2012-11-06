@@ -190,6 +190,19 @@ lowerTriIndex = function(m, diag=FALSE){
 	return(list(x=out$x+1, y=out$y+1))	
 }
 
+weihouette = function(mis, cluster.member){
+	k = length(table(cluster.member))
+	m = length(cluster.member)
+	lenpw = length(mis)
+	w = rep(0, k)
+	a = rep(0, k)
+	b = rep(0, k)
+
+	out = .C("weihouette", mis = as.double(mis), clust_member = as.integer(cluster.member-1), k = as.integer(k), m = as.integer(m), lenpw = as.integer(lenpw), w = as.double(w), a = as.double(a), b = as.double(b) )
+
+	return (list(w = out$w, a = out$a, b = out$b))
+
+}
 
 # test.c(a)
 

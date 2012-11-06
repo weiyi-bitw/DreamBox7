@@ -33,25 +33,4 @@ void order(double const *x, int n, int *o){
   quickSortR(x, o, 0, n-1);
 }
 
-void lowerTriIndex(int *x, int *y, int *m, int *diag){
-	int i, j,c = 0;
-
-	if(*diag == 1){
-		for(i = 0; i < *m; i++){
-			for(j = i; j < *m; j++){
-				x[c] = i;
-				y[c] = j;
-				c++;
-			}
-		}
-	}else{
-		for(i = 0; i < *m; i++){
-			for(j = (i+1); j < *m; j++){
-				x[c] = i;
-				y[c] = j;
-				c++;
-			}
-		}
-	}
-}
 
