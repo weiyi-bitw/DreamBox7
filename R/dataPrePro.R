@@ -62,7 +62,7 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   pbs = list()
   mappedGenes = rep(NA, nrow(ge))
   names(mappedGenes) = rownames(ge)
-  idx = intersect(rownames(ge) , rownames(map))
+  idx = intersect(rownames(map) , rownames(ge))
   mappedGenes[idx] = map[idx,1]
   for (i in 1:nMeta){
     #cat(i, "\n")
@@ -107,7 +107,7 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
 	}) )
 	if(length(chosenIdx) == 0) {chosenIdx = NULL; badMat = NULL}
     }    
-    pbs[[i]] = c(goodIdx, chosenIdx)
+    pbs[[i]] = sapply(c(goodIdx, chosenIdx), names)
     metaSpace[i,] = (apply(rbind(goodMat, badMat), 2, function(x){mean(x, na.rm=TRUE)}))
 
     #o = sapply(genes, 
@@ -127,8 +127,8 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   o = list(metaSpace = metaSpace, pbs = pbs)
   return (o)
   }else{
-
 	metaSpace = t(sapply(chosenProbes, function(pb){
+		pb = sapply(pb, function(p){intersect(p, rownames(ge))})
 		gmat = sapply(pb, function(p, ge){
 			if(length(p) > 1){
 				apply(ge[p,], 2, mean)
@@ -147,7 +147,10 @@ CreateGeneSpace <- function(ge, oncogenes, map){
   ng = length(oncogenes)
   gSpace = matrix(NA, nrow=ng, ncol=ncol(ge))
   dimnames(gSpace) = list(oncogenes, colnames(ge))
-  mappedGenes = map[rownames(ge), "Gene.Symbol"]
+  mappedGenes = rep(NA, nrow(ge))
+  names(mappedGenes) = rownames(ge)
+  idx = intersect(rownames(ge) , rownames(map))
+  mappedGenes[idx] = map[idx,1]
   for(i in 1:ng){
     g = oncogenes[i]
     idx = which(mappedGenes == g)
