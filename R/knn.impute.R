@@ -63,8 +63,10 @@ ewknn.predict <- function(X, t, qX, wvec=rep(1, nrow(X)), k=ncol(X)){
 
 
 preproClncKNN=function(c, survobj=NULL, isFactorIn=NULL, dwIn=NULL, ccdi.upper = 0.55, ccdi.lower = 0.45){
+	c = cbind(c)
 	n = ncol(c)
 	m = nrow(c)
+	if(n==1) colnames(c) = names(dwIn)
 	if(!is.null(survobj)) if(nrow(survobj) != m) {stop("error: nrow(survobj) != nrow(clnc)")}
 	if(!is.null(dwIn)) if(length(dwIn) != n) stop("error: length(distWeight) != ncol(clnc)")
 	if(!is.null(isFactorIn)) if(length(isFactorIn) != n) stop("error: length(isFactor) != ncol(clnc)")
