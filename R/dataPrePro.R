@@ -310,3 +310,11 @@ removeTaggedFeatures = function(colName, ft){
 	return (out)
 }
 
+checkIntegrity = function(c){
+	killft = NULL
+	for(i in 1:ncol(c)){
+		if(length(table(c[,i]))<2) killft = c(killft, i)
+	}
+	colnames(c)[killft]
+}
+

@@ -32,5 +32,6 @@ export(logRankScore,
 	ewknn.predict.clnc,
 	preproClncKNN,
 	lowerTriIndex,
-	weihouette
+	weihouette,
+	checkIntegrity
 )
