@@ -54,6 +54,24 @@ lazyImputeDFClncFULL = function(c){
   }
   return (c)
 }
+lazyImputeDFClncOslo = function(c){
+  idx = grep("NOT_IN_OSLOVAL",colnames(c))
+  if(length(idx) > 0) c = c[,-idx]
+  idx = grep("IHC", colnames(c))
+  if(length(idx) > 0) c = c[,-idx]
+  for(i in 1:ncol(c)){
+    idx = which(is.na(c[,i]))
+    if(length(idx) > 0){
+      if(class(c[,i]) == "numeric") c[idx, i] = mean(c[-idx,i])
+      if(class(c[,i]) == "factor" ){ 
+        cc = as.vector(c[,i])
+	cc[idx] = "NA"
+	c[, i] = factor(cc)
+	}
+    }
+  }
+  return (c)
+}
 CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
   if(is.null(chosenProbes)) {
   nMeta = length(attractome)
@@ -179,7 +197,6 @@ expandClnc = function(c){
   tr.CT = as.numeric((c$Treatment == "CT") | (c$Treatment == "CT/HT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT"))
   tr.HT = as.numeric((c$Treatment == "HT") | (c$Treatment == "CT/HT") | (c$Treatment == "HT/RT") | (c$Treatment =="CT/HT/RT"))
   tr.RT = as.numeric((c$Treatment == "RT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT") | (c$Treatment == "HT/RT"))
-  trMat = cbind(tr.CT, tr.HT, tr.RT)
 
   gd.1 = as.numeric(c$grade==1)
   gd.2 = as.numeric(c$grade==2)
@@ -302,6 +319,28 @@ getTags = function(ft){
 	return (tags)
 }
 
+expandClncOslo = function(c){
+  h.IDC =as.numeric(c$histological_type=="IDC")
+  h.ILC =as.numeric(c$histological_type=="ILC")
+  h.IDCpILC =as.numeric(c$histological_type=="IDC+ILC")
+  h.IDCnMED =as.numeric(c$histological_type=="IDC-MED")
+  h.IDCnMUC =as.numeric(c$histological_type=="IDC-MUC")
+  h.IDCnTUB =as.numeric(c$histological_type=="IDC-TUB")
+
+  er.P=as.numeric(c$ER.Expr=="+")
+  er.N=as.numeric(c$ER.Expr=="-")
+  
+  gd.1 = as.numeric(c$grade==1)
+  gd.2 = as.numeric(c$grade==2)
+  gd.3 = as.numeric(c$grade==3)
+
+  cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB,  
+                   er.N, er.P)
+  for(i in 4:ncol(cmat)){
+    cmat[,i] = factor(cmat[,i])
+  }
+  return(cmat)
+}
 removeTaggedFeatures = function(colName, ft){
 	t = getTags(colName)
 	tags = getTags(ft)

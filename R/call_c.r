@@ -75,6 +75,11 @@ getCCDIdx = function(predictions, observations){
 	return (out); 
 }
 
+getWCCDIdx = function(predictions, w, observations){
+	out = .Call("ccdiwR2C", predictions, w, observations)
+	return (out); 
+}
+
 getAllCCDIWz = function(x, observations, sorted=FALSE){
         n = ncol(x)
         m = nrow(x)
