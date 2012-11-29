@@ -12,8 +12,6 @@ lazyImputationClnc <- function(c){ # so i'm lazy, bite me!
 lazyImputeDFClnc = function(c){
   idx = grep("NOT_IN_OSLOVAL",colnames(c))
   if(length(idx) > 0) c = c[,-idx]
-  idx = grep(".Expr", colnames(c))
-  if(length(idx) > 0) c = c[,-idx]
   idx = grep("HER2_IHC", colnames(c))
   if(length(idx) > 0) c = c[,-idx]
   for(i in 1:ncol(c)){
@@ -189,11 +187,17 @@ expandClnc = function(c){
   #h.OTHER =as.numeric(c$histological_type=="OTHER")
   #h.OTHERINV =as.numeric(c$histological_type=="OTHER INVASIVE")
   #h.INVTUMOR =as.numeric(c$histological_type=="INVASIVE TUMOR")
-  h.other = as.numeric(c$histological_type=="MIXED NST AND A SPECIAL TYPE" | c$histological_type=="OTHER" | c$histological_type=="OTHER INVASIVE" | c$histological_type=="INVASIVE TUMOR" | c$histological_type=="PHYL")
+  #h.other = as.numeric(c$histological_type=="MIXED NST AND A SPECIAL TYPE" | c$histological_type=="OTHER" | c$histological_type=="OTHER INVASIVE" | c$histological_type=="INVASIVE TUMOR" | c$histological_type=="PHYL")
 
-  er.P=as.numeric(c$ER_IHC_status=="pos")
-  er.N=as.numeric(c$ER_IHC_status=="neg")
+  er.P=as.numeric(c$ER.Expr=="+")
+  er.N=as.numeric(c$ER.Expr=="-")
   
+#  her2.P=as.numeric(c$Her2.Expr=="+")
+#  her2.N=as.numeric(c$Her2.Expr=="-")
+
+#  pr.P=as.numeric(c$PR.Expr=="+")
+#  pr.N=as.numeric(c$PR.Expr=="-")
+
   tr.CT = as.numeric((c$Treatment == "CT") | (c$Treatment == "CT/HT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT"))
   tr.HT = as.numeric((c$Treatment == "HT") | (c$Treatment == "CT/HT") | (c$Treatment == "HT/RT") | (c$Treatment =="CT/HT/RT"))
   tr.RT = as.numeric((c$Treatment == "RT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT") | (c$Treatment == "HT/RT"))
@@ -210,7 +214,7 @@ expandClnc = function(c){
   her2.snp6.loss = as.numeric(c$HER2_SNP6_state=="LOSS")
   her2.snp6.neut = as.numeric(c$HER2_SNP6_state=="NEUT")
   
-  cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
+  cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, #h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
                    er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
   for(i in 4:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
@@ -313,12 +317,6 @@ expandClncFULL = function(c){
   return(cmat)
 }
 
-getTags = function(ft){
-	taglist = strsplit(ft, "\\.")
-	tags = sapply(taglist, function(x){x[1]})
-	return (tags)
-}
-
 expandClncOslo = function(c){
   h.IDC =as.numeric(c$histological_type=="IDC")
   h.ILC =as.numeric(c$histological_type=="ILC")
@@ -341,6 +339,13 @@ expandClncOslo = function(c){
   }
   return(cmat)
 }
+
+getTags = function(ft){
+	taglist = strsplit(ft, "\\.")
+	tags = sapply(taglist, function(x){x[1]})
+	return (tags)
+}
+
 removeTaggedFeatures = function(colName, ft){
 	t = getTags(colName)
 	tags = getTags(ft)
