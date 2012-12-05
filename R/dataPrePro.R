@@ -201,6 +201,7 @@ expandClnc = function(c){
   tr.CT = as.numeric((c$Treatment == "CT") | (c$Treatment == "CT/HT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT"))
   tr.HT = as.numeric((c$Treatment == "HT") | (c$Treatment == "CT/HT") | (c$Treatment == "HT/RT") | (c$Treatment =="CT/HT/RT"))
   tr.RT = as.numeric((c$Treatment == "RT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT") | (c$Treatment == "HT/RT"))
+  tr.NONE = as.numeric(c$Treatment == "NONE")
 
   gd.1 = as.numeric(c$grade==1)
   gd.2 = as.numeric(c$grade==2)
@@ -215,7 +216,7 @@ expandClnc = function(c){
   her2.snp6.neut = as.numeric(c$HER2_SNP6_state=="NEUT")
   
   cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB, #h.other,# h.MIXED, h.OTHER, h.OTHERINV, h.INVTUMOR,
-                   er.N, er.P, tr.CT, tr.HT, tr.RT, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
+                   er.N, er.P, tr.CT, tr.HT, tr.RT, tr.NONE, her2.snp6.gain, her2.snp6.loss, her2.snp6.neut)#, p.LumA, p.LumB, p.Her2, p.Normal, p.Basal, her2.1, her2.2, her2.3)
   for(i in 4:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
   }
@@ -317,7 +318,7 @@ expandClncFULL = function(c){
   return(cmat)
 }
 
-expandClncOslo = function(c){
+expandClncOslo = function(c, ){
   h.IDC =as.numeric(c$histological_type=="IDC")
   h.ILC =as.numeric(c$histological_type=="ILC")
   h.IDCpILC =as.numeric(c$histological_type=="IDC+ILC")
@@ -328,12 +329,16 @@ expandClncOslo = function(c){
   er.P=as.numeric(c$ER.Expr=="+")
   er.N=as.numeric(c$ER.Expr=="-")
   
+  tr.CT = as.numeric((c$Treatment == "CT") | (c$Treatment == "CT/HT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT"))
+  tr.HT = as.numeric((c$Treatment == "HT") | (c$Treatment == "CT/HT") | (c$Treatment == "HT/RT") | (c$Treatment =="CT/HT/RT"))
+  tr.RT = as.numeric((c$Treatment == "RT") | (c$Treatment == "CT/HT/RT") | (c$Treatment == "CT/RT") | (c$Treatment == "HT/RT"))
+
   gd.1 = as.numeric(c$grade==1)
   gd.2 = as.numeric(c$grade==2)
   gd.3 = as.numeric(c$grade==3)
 
   cmat<-data.frame(c[, c(1:3)], gd.1, gd.2, gd.3, h.IDC, h.ILC, h.IDCpILC, h.IDCnMED, h.IDCnMUC, h.IDCnTUB,  
-                   er.N, er.P)
+                   er.N, er.P, tr.CT, tr.HT, tr.RT)
   for(i in 4:ncol(cmat)){
     cmat[,i] = factor(cmat[,i])
   }
