@@ -318,7 +318,7 @@ expandClncFULL = function(c){
   return(cmat)
 }
 
-expandClncOslo = function(c, ){
+expandClncOslo = function(c){
   h.IDC =as.numeric(c$histological_type=="IDC")
   h.ILC =as.numeric(c$histological_type=="ILC")
   h.IDCpILC =as.numeric(c$histological_type=="IDC+ILC")
