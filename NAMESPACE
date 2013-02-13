@@ -2,7 +2,6 @@ useDynLib(DreamBox7)
 importFrom(survival, coxph, survConcordance)
 importFrom(caret, createFolds)
 importFrom(gbm, gbm.fit)
-importFrom(devtools, source_url, install_github)
 export(logRankScore, 
 	getMI,
 	getMI3,

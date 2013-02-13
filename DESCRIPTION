@@ -4,6 +4,6 @@ Date: 2013-02-13
 Title: Working libraries for DREAM7 BCC challenge
 Author: Cheng, Wei-Yi <wc2302@columbia.edu>
 Maintainer: Cheng, Wei-Yi <wc2302@columbia.edu>
-Depends: R (>= 2.13), caret, survival, gbm, devtools
+Depends: R (>= 2.13), caret, survival, gbm
 Description: Contains necessary codes for DREAM7 BCC challenge.
 License: GPL (>= 2)
