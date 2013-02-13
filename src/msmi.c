@@ -26,7 +26,7 @@ void quickSortR(float const * arr, int *idx, int left, int right) {
             quickSortR(arr, idx, i, right);
 }
 
-double entropy1s(const double *weights, const bool *eff, int numSamples, int numBins) {
+double entropy1s(const double *weights, const int *eff, int numSamples, int numBins) {
   int curBin, curSample, k = numSamples;
   double H = 0, h;
   for(curSample = 0; curSample < numSamples; curSample++){
@@ -46,7 +46,7 @@ double entropy1s(const double *weights, const bool *eff, int numSamples, int num
   return H;
 }
 
-double entropy2sDiffBins(const double *wx, const double *wy, const bool *eff, int numSamples, int binx, int biny){
+double entropy2sDiffBins(const double *wx, const double *wy, const int *eff, int numSamples, int binx, int biny){
 	int curBinX, curBinY, curSample, k = numSamples;
 	double H = 0, h;
 	for(curSample = 0; curSample < numSamples; curSample++){
@@ -83,7 +83,7 @@ void msmi(double const *x, double const *surv, int *nIn, int *binx, int *sox, do
 	int *o = (int*) calloc(n, sizeof(int));
 	double *ux = (double*) calloc(*binx + *sox, sizeof(double));
 	double *wx = (double*) calloc(*binx * n, sizeof(double));
-	bool *effective = (bool*) calloc(n, sizeof(bool));
+	int *effective = (int*) calloc(n, sizeof(int));
 	double *wb = (double*) calloc(2 * n, sizeof(double));
 	double e1x, e1b, curMI;
 
@@ -101,7 +101,7 @@ void msmi(double const *x, double const *surv, int *nIn, int *binx, int *sox, do
 	for(i = 0; i < n; i++){
 		if(i <= ti){
 			wb[o[i]] = 1; wb[n + o[i]] = 0;
-			effective[o[i]] = surv[n + o[i]] == 1? true : false;
+			effective[o[i]] = surv[n + o[i]] == 1? 1 : 0;
 		}else{
 			wb[o[i]] = 0; wb[n + o[i]] = 1;
 			effective[o[i]] = true;
@@ -116,7 +116,7 @@ void msmi(double const *x, double const *surv, int *nIn, int *binx, int *sox, do
 	ti++;
 	while(surv[o[ti+1]] < *tend){
 		wb[o[ti]] = 1; wb[n + o[i]] = 0;		
-		effective[o[ti]] = surv[n + o[i]] == 1? true : false;
+		effective[o[ti]] = surv[n + o[i]] == 1? 1 : 0;
 		e1x = entropy1s(wx, effective, n, *binx)
 		e1b = entropy1s(wb, effective, n, 2);
 		curMI = e1x + e1b - entropy2sDiffBins(wx, wb, effective, n, *binx, 2);
