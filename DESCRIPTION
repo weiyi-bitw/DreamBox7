@@ -1,9 +1,9 @@
 Package: DreamBox7
-Version: 0.214
-Date: 2012-10-12
+Version: 0.215
+Date: 2013-02-13
 Title: Working libraries for DREAM7 BCC challenge
 Author: Cheng, Wei-Yi <wc2302@columbia.edu>
 Maintainer: Cheng, Wei-Yi <wc2302@columbia.edu>
-Depends: R (>= 2.13), caret, survival, gbm
+Depends: R (>= 2.13), caret, survival, gbm, RCurl
 Description: Contains necessary codes for DREAM7 BCC challenge.
 License: GPL (>= 2)
