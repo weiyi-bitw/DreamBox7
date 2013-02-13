@@ -2,7 +2,7 @@ useDynLib(DreamBox7)
 importFrom(survival, coxph, survConcordance)
 importFrom(caret, createFolds)
 importFrom(gbm, gbm.fit)
-importFrom(RCurl, getURL)
+importFrom(devtools, source_url, install_github)
 export(logRankScore, 
 	getMI,
 	getMI3,
@@ -37,6 +37,5 @@ export(logRankScore,
 	preproClncKNN,
 	lowerTriIndex,
 	weihouette,
-	checkIntegrity,
-	source_https
+	checkIntegrity
 )
