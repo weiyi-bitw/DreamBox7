@@ -104,10 +104,10 @@ void msmi(double const *x, double const *surv, int *nIn, int *binx, int *sox, do
 			effective[o[i]] = surv[n + o[i]] == 1? 1 : 0;
 		}else{
 			wb[o[i]] = 0; wb[n + o[i]] = 1;
-			effective[o[i]] = true;
+			effective[o[i]] = 1;
 		}
 	}
-	e1x = entropy1s(wx, effective, n, *binx)
+	e1x = entropy1s(wx, effective, n, *binx);
 	e1b = entropy1s(wb, effective, n, 2);
 	curMI = e1x + e1b - entropy2sDiffBins(wx, wb, effective, n, *binx, 2);
 	*mimax = curMI;
@@ -117,7 +117,7 @@ void msmi(double const *x, double const *surv, int *nIn, int *binx, int *sox, do
 	while(surv[o[ti+1]] < *tend){
 		wb[o[ti]] = 1; wb[n + o[i]] = 0;		
 		effective[o[ti]] = surv[n + o[i]] == 1? 1 : 0;
-		e1x = entropy1s(wx, effective, n, *binx)
+		e1x = entropy1s(wx, effective, n, *binx);
 		e1b = entropy1s(wb, effective, n, 2);
 		curMI = e1x + e1b - entropy2sDiffBins(wx, wb, effective, n, *binx, 2);
 		if(curMI > *mimax){
