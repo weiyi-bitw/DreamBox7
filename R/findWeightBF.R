@@ -10,7 +10,7 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 		w[is.na(w)] = 1
 	}
 	mid = order(abs(w))[ceiling(length(w)/2)]
-	w = w/w[mid]
+	w = w/abs(w[mid])
 	temp = x[mid,]
 	x[mid,] = x[1,]
 	x[1,] = temp
