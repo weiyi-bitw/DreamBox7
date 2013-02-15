@@ -7,7 +7,8 @@
 BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 	if(is.null(w)){
 		w = coxph(surv~., data=data.frame(t(x)))$coef
-		w = w/w[1]
+		w[is.na(w)] = 1
+		w = w/median(abs(w))
 	}
 	m = nrow(x)
 	n = ncol(x)
@@ -15,6 +16,56 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 	return (out$w)
 }
 
+BFFWFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, maxIter=1000, k = 2, verbose=TRUE, ft.init= NULL,seed=913){
+	set.seed(seed)
+	m = nrow(x) # number of samples
+	n = ncol(x) # number of features
+
+	out = list()
+
+	#idx.train = sample(1:n, floor(train.fraction * n))
+	count = 0
+	if(is.null(ft.init)){
+		ft = 1:numFeatures
+	}else{
+		ft = ft.init
+	}
+	#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+	#p = predict(cm, x[-idx.train,ft])
+	#ccdi = getCCDIdx(p, surv[-idx.train,])
+	w = BFFW(x[ft,], surv, maxIter = maxIter, verbose=FALSE)
+	ccdi = getCCDIdx(w %*% x[ft,], surv)
+	cat("Starting CCDI:", ccdi, "\n");flush.console()
+	bestCCDI = ccdi
+	bestFeature = ft
+	bestW = w
+
+	while( count < randomShuffle ){
+		idx = sample(1:numFeatures, k)
+		ft[idx] = sample(setdiff(1:m, ft[-idx]), k)
+		#cm = coxph(surv[idx.train,]~., data=x[idx.train,ft])
+		#p = predict(cm, x[-idx.train,ft])
+		#ccdi = getCCDIdx(p, surv[-idx.train,])
+		w = BFFW(x[ft,], surv, maxIter = maxIter, verbose=FALSE)
+		ccdi = getCCDIdx(w %*% x[ft,], surv)
+		if(ccdi > bestCCDI){
+			cat("New CCDI:\t", ccdi, "\n");flush.console()
+			bestCCDI = ccdi
+			cat("New feature: \n\t", rownames(x)[ft], "\n");flush.console()
+			bestFeature = ft
+			bestCM = w
+			count = 0
+		}else{
+			ft = bestFeature
+		}
+		count = count + 1
+		if(count %% 1000 == 0) cat(count, "\n");flush.console()
+	}
+
+	out[[r]] = list(bestFeatures=rownames(x)[bestFeature], bestCCDI=bestCCDI, bestCM = bestCM)
+	cat("Done.\n");flush.console()
+	return (out)
+}
 #=========================================
 #
 # BFFS - Brute-Force Feature Selection
