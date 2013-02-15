@@ -8,8 +8,17 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 	if(is.null(w)){
 		w = coxph(surv~., data=data.frame(t(x)))$coef
 		w[is.na(w)] = 1
-		w = w/median(abs(w))
 	}
+	mid = order(abs(w))[ceiling(length(w)/2)]
+	w = w/w[mid]
+	temp = x[mid,]
+	x[mid,] = x[1,]
+	x[1,] = temp
+
+	temp = w[mid]
+	w[mid] = w[1]
+	w[1] = temp
+	
 	m = nrow(x)
 	n = ncol(x)
 	out = .C("findWeightBF", x=as.double(x), surv=as.double(surv),w = as.double(w), mIn = as.integer(m), nIn = as.integer(n), dIn = as.double(delta), maxIterIn = as.integer(maxIter), verbose = as.integer(verbose))
