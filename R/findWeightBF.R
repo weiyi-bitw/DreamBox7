@@ -22,7 +22,13 @@ BFFW = function(x, surv, w=NULL, delta = 0.5, maxIter = 10000, verbose = TRUE){
 	m = nrow(x)
 	n = ncol(x)
 	out = .C("findWeightBF", x=as.double(x), surv=as.double(surv),w = as.double(w), mIn = as.integer(m), nIn = as.integer(n), dIn = as.double(delta), maxIterIn = as.integer(maxIter), verbose = as.integer(verbose))
-	return (out$w)
+
+	wo = out$w
+	temp = wo[1]
+	wo[1] = wo[mid]
+	wo[mid] = temp
+
+	return (wo)
 }
 
 BFFWFS = function(x, surv, numFeatures = 5, randomShuffle = 10000, maxIter=1000, k = 2, verbose=TRUE, ft.init= NULL,seed=913){
