@@ -53,7 +53,7 @@ gbm.cvrun = function (formula = formula(data), distribution = "bernoulli",
                   NULL, NULL, w[i.train][i]), var.monotone = var.monotone,
                 n.trees = n.trees, interaction.depth = interaction.depth,
                 n.minobsinnode = n.minobsinnode, shrinkage = shrinkage,
-                bag.fraction = bag.fraction, train.fraction = mean(cv.group !=
+                bag.fraction = bag.fraction, nTrain = sum(cv.group !=
                   i.cv), keep.data = FALSE, verbose = verbose,
                 var.names = var.names, response.name = response.name)
 	    } else {
@@ -63,7 +63,7 @@ gbm.cvrun = function (formula = formula(data), distribution = "bernoulli",
                   NULL, NULL, w[i.train][i]), var.monotone = var.monotone, 
                 n.trees = n.trees, interaction.depth = interaction.depth, 
                 n.minobsinnode = n.minobsinnode, shrinkage = shrinkage, 
-                bag.fraction = bag.fraction, train.fraction = mean(cv.group != 
+                bag.fraction = bag.fraction, nTrain = sum(cv.group != 
                   i.cv), keep.data = FALSE, verbose = verbose, 
                 var.names = var.names, response.name = response.name)
 	    }
@@ -75,7 +75,7 @@ gbm.cvrun = function (formula = formula(data), distribution = "bernoulli",
     gbm.obj <- gbm.fit(x, y, offset = offset, distribution = distribution, 
         w = w, var.monotone = var.monotone, n.trees = n.trees, 
         interaction.depth = interaction.depth, n.minobsinnode = n.minobsinnode, 
-        shrinkage = shrinkage, bag.fraction = bag.fraction, train.fraction = train.fraction, 
+        shrinkage = shrinkage, bag.fraction = bag.fraction, nTrain = floor(train.fraction * nrow(x)), 
         keep.data = keep.data, verbose = verbose, var.names = var.names, 
         response.name = response.name)
     gbm.obj$Terms <- Terms
