@@ -90,6 +90,8 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL, maxGen
       }else{
         genes = a[, 1]
       }
+    }else{
+	genes = a[, 1]
     }
     il = lapply(genes, function(g){which(mappedGenes == g)})
     ill = sapply(il, length)
