@@ -70,7 +70,7 @@ lazyImputeDFClncOslo = function(c){
   }
   return (c)
 }
-CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
+CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL, maxGenes = NULL){
   if(is.null(chosenProbes)) {
   nMeta = length(attractome)
   metaSpace = matrix(NA, nrow=nMeta, ncol=ncol(ge))
@@ -84,10 +84,12 @@ CreateMetageneSpace <- function(ge, attractome, map, chosenProbes = NULL){
     #cat(i, "\n")
     #flush.console()
     a = attractome[[i]]
-    if(nrow(a) > 10){
-      genes = a[1:10,1]
-    }else{
-      genes = a[, 1]
+    if(!is.null(maxGenes)){
+      if(nrow(a) > maxGenes){
+        genes = a[1:maxGenes,1]
+      }else{
+        genes = a[, 1]
+      }
     }
     il = lapply(genes, function(g){which(mappedGenes == g)})
     ill = sapply(il, length)
