@@ -32,3 +32,5 @@ void order(double const *x, int n, int *o){
   }
   quickSortR(x, o, 0, n-1);
 }
+
+

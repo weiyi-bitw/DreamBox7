@@ -90,6 +90,57 @@ void concordance_index_all(const double* predictions, const double* observations
 }
 
 
+double concordance_index_w(const double* predictions, const double* w, const double* observations, R_len_t n)
+{
+	int i, j;
+	double c, score = 0, sum = 0, ww;
+	for(i = 0; i < n-1; i++){
+	  for(j = i+1; j < n; j++){
+		if( ((observations[n + i]==1) && (observations[n + j]==1)) ||
+		((observations[n + i] == 1) && (observations[j] > observations[i])) || 
+		((observations[n + j] == 1) && (observations[i] > observations[j])) )
+		{
+			ww = 2 * w[i] * w[j];
+			sum += ww;
+			if(observations[i] < observations[j]){
+				if(predictions[i] > predictions[j]) score += ww;
+				else if(predictions[i] == predictions[j]) score += ww/2;
+			}
+			if(observations[i] == observations[j] && predictions[i] == predictions[j]) score += ww;
+			if(observations[i] > observations[j]){
+				if(predictions[i] < predictions[j]) score += ww;
+				else if(predictions[i] == predictions[j]) score += ww/2;
+			}
+
+
+		}
+	  }
+	}
+	c = score/sum;
+	return c;
+}
+
+SEXP ccdiwR2C(SEXP predIn, SEXP wIn, SEXP obsIn){
+	SEXP out;
+	double *predictions, *observations, *o, *w;
+	R_len_t n;
+
+	PROTECT(predIn = AS_NUMERIC(predIn));
+	PROTECT(obsIn = AS_NUMERIC(obsIn));
+	PROTECT(wIn = AS_NUMERIC(wIn));
+	PROTECT(out = NEW_NUMERIC(1));
+	n = LENGTH(predIn);
+
+	predictions = NUMERIC_POINTER(predIn);
+	observations = NUMERIC_POINTER(obsIn);
+	w = NUMERIC_POINTER(wIn);
+	o = NUMERIC_POINTER(out);
+
+	*o = concordance_index_w(predictions, w, observations, n);
+	UNPROTECT(4);
+	return out;
+
+}
 
 /*
 int main(){

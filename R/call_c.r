@@ -75,6 +75,11 @@ getCCDIdx = function(predictions, observations){
 	return (out); 
 }
 
+getWCCDIdx = function(predictions, w, observations){
+	out = .Call("ccdiwR2C", predictions, w, observations)
+	return (out); 
+}
+
 getAllCCDIWz = function(x, observations, sorted=FALSE){
         n = ncol(x)
         m = nrow(x)
@@ -121,6 +126,24 @@ getAllMIWz = function(x, vec, bin=6, so=3, rankBased=FALSE, normalize = TRUE, so
   return (mi)
 }
 
+getAllPWMIWz = function(x, bin=6, so=3, rankBased=FALSE, normalize = TRUE, negateMI = FALSE){
+  m = nrow(x)
+  n = ncol(x)
+  if(so >= bin){stop("spline order must be less than bin")}
+
+  if(rankBased){
+    for(i in 1:m){
+      x[i,] = rank(x[i,])
+    } 
+    vec = rank(vec)
+  }
+  garbage = rep(-1, m*(m-1)/2)
+  out = .C("getAllPWMIWz", data = as.double(x), mi = as.double(garbage), m = as.integer(m), n = as.integer(n), bin = as.integer(bin),so = as.integer(so), norm=as.integer(normalize), negateMI = as.integer(negateMI))
+
+  mi = out$mi
+  return (mi)
+}
+
 getAllCorWz = function(x, vec, rankBased=FALSE, sorting=FALSE){
   m = nrow(x)
   n = ncol(x)
@@ -157,6 +180,33 @@ logRankScore = function(survobj){
 testNA = function(i){
 	out = .Call("testNA", i)
 	return (out)
+}
+
+lowerTriIndex = function(m, diag=FALSE){
+	if(diag){
+		n = m * (m+1) / 2
+	}else{
+		n = m * (m-1) / 2
+	}
+	x = rep(-1, n)
+	y = rep(-1, n)
+	out = .C("lowerTriIndex", x=as.integer(x), y=as.integer(y), m = as.integer(m), diag=as.integer(diag))
+
+	return(list(x=out$x+1, y=out$y+1))	
+}
+
+weihouette = function(mis, cluster.member){
+	k = length(table(cluster.member))
+	m = length(cluster.member)
+	lenpw = length(mis)
+	w = rep(0, k)
+	a = rep(0, k)
+	b = rep(0, k)
+
+	out = .C("weihouette", mis = as.double(mis), clust_member = as.integer(cluster.member-1), k = as.integer(k), m = as.integer(m), lenpw = as.integer(lenpw), w = as.double(w), a = as.double(a), b = as.double(b) )
+
+	return (list(w = out$w, a = out$a, b = out$b))
+
 }
 
 # test.c(a)
